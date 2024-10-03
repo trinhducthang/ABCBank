@@ -1,36 +1,41 @@
 package com.ducthang._footbank.exception;
+
+import com.ducthang._footbank.response.ApiResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Date;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(Exception e) {
-        System.out.println("============handleValidationException=============");
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setTimestamp(new Date());
-        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        System.out.println("Validation Exception");
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
 
-        String message = e.getMessage();
-//        int start = message.lastIndexOf("[");
-//        int end = message.lastIndexOf("]");
-//        message = message.substring(start + 1, end -1);
-        message = Objects.requireNonNull(((MethodArgumentNotValidException) e).getFieldError()).getDefaultMessage();
-        errorResponse.setError("Payload Invalid");
-
-        errorResponse.setMessage(message);
-
-        return errorResponse;
+        return ResponseEntity.badRequest().body(ApiResponse.<Object>builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .result(errors)
+                .build());
     }
 
-
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Object>> handleGeneralExceptions(Exception ex) {
+        System.out.println("General Exception: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.<Object>builder()
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .result(null)
+                .build());
+    }
 
 }
