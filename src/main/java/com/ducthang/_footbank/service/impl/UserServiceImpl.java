@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +33,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(User user) {
-        return false;
+    public boolean deleteUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits"));
+        userRepository.delete(user);
+        return true;
+    }
+
+    @Override
+    public UserDTO getUser(Long id) {
+        return userMapper.toDto(userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits")));
+    }
+
+    @Override
+    public List<UserDTO> getUsers() {
+        List<User> users = userRepository.findAll();
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for (User user : users) {
+            userDTOs.add(userMapper.toDto(user));
+        }
+        return userDTOs;
+    }
+
+    @Override
+    public UserDTO updateUser(UserDTO user) {
+        User user1 = userRepository.findById(user.getId()).orElseThrow(()-> new RuntimeException("user not exits"));
+        user1 = userMapper.toEntity(user);
+        user1.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user1);
+        return user;
     }
 
     public boolean checkOverlap(User user) {

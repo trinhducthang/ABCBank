@@ -6,10 +6,8 @@ import com.ducthang._footbank.service.itf.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -36,5 +34,35 @@ public class UserController {
                     .build();
         }
     }
+
+    @GetMapping("/info")
+    public ApiResponse<UserDTO> getUser(@RequestParam long id){
+        try {
+            return ApiResponse.<UserDTO>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Get user success!")
+                    .result(userService.getUser(id))
+                    .build();
+        }
+        catch (Exception e) {
+            return ApiResponse.<UserDTO>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
+
+
+    @DeleteMapping("/delete")
+    public ApiResponse<?> deleteUser(@PathVariable long id){
+        try{
+            return new ApiResponse<>(HttpStatus.OK.value(), "Delete success",userService.deleteUser(id));
+        }
+        catch (Exception e) {
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Delete failed because "+ e.getMessage(), null);
+        }
+    }
+
+
 
 }
