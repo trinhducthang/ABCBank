@@ -53,13 +53,31 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/delete")
-    public ApiResponse<?> deleteUser(@PathVariable long id){
+    @DeleteMapping("/info")
+    public ApiResponse<?> deleteUser(@RequestParam long id){
         try{
             return new ApiResponse<>(HttpStatus.OK.value(), "Delete success",userService.deleteUser(id));
         }
         catch (Exception e) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Delete failed because "+ e.getMessage(), null);
+        }
+    }
+
+    @PutMapping("/info")
+    public ApiResponse<UserDTO> updateUser(@Valid @RequestParam UserDTO user){
+        try{
+            return ApiResponse.<UserDTO>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Update user success!")
+                    .result(userService.updateUser(user))
+                    .build();
+        }
+        catch (Exception e) {
+            return ApiResponse.<UserDTO>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message(e.getMessage())
+                    .result(null)
+                    .build();
         }
     }
 

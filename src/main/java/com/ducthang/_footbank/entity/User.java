@@ -1,12 +1,14 @@
 package com.ducthang._footbank.entity;
 
 import com.ducthang._footbank.entity.enum_.Gender;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -39,6 +41,10 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.DETACH)
+    @JsonManagedReference
+    private Set<AccountBank> accountBanks;
 
 }
 
