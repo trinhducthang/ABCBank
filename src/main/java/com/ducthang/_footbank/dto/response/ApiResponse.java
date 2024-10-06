@@ -1,4 +1,4 @@
-package com.ducthang._footbank.response;
+package com.ducthang._footbank.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

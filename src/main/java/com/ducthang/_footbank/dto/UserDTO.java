@@ -1,12 +1,14 @@
 package com.ducthang._footbank.dto;
 
 import com.ducthang._footbank.entity.enum_.Gender;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDTO {
 
     private Long id;
@@ -16,7 +18,6 @@ public class UserDTO {
     private String username;
 
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
     @Size(max = 100, message = "First name cannot exceed 100 characters")

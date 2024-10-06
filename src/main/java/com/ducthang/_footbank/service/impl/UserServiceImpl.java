@@ -2,10 +2,13 @@ package com.ducthang._footbank.service.impl;
 
 import com.ducthang._footbank.dto.UserDTO;
 import com.ducthang._footbank.entity.User;
+import com.ducthang._footbank.entity.enum_.Role;
 import com.ducthang._footbank.mapper.UserMapper;
 import com.ducthang._footbank.repository.UserRepository;
 import com.ducthang._footbank.service.itf.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,6 +31,10 @@ public class UserServiceImpl implements UserService {
         User createUser = userMapper.toEntity(user);
         createUser.setCreatedAt(LocalDateTime.now());
         createUser.setUpdatedAt(LocalDateTime.now());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        createUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        createUser.setRole(Role.CLIENT);
+        user.setPassword("**************");
         userRepository.save(createUser);
         return user;
     }
@@ -64,6 +71,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean checkOverlap(User user) {
-        return userRepository.findByUsername(user.getUsername()) != null;
+        return userRepository.findByUsername(user.getUsername()).isPresent();
     }
 }
