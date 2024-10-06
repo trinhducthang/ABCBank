@@ -1,7 +1,6 @@
 package com.ducthang._footbank.service.itf;
 
 import com.ducthang._footbank.dto.UserDTO;
-import com.ducthang._footbank.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

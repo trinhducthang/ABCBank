@@ -1,6 +1,7 @@
 package com.ducthang._footbank.entity;
 
 import com.ducthang._footbank.entity.enum_.Gender;
+import com.ducthang._footbank.entity.enum_.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
-    private String password;
+    String password;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -27,6 +28,7 @@ public class User {
     private String email;
     private String phone;
     private Date dob;
+    private Role role;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
