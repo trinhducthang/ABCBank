@@ -48,7 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUser(Long id) {
-        return userMapper.toDto(userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits")));
+        UserDTO userDTO = userMapper.toDto(userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits")));
+        userDTO.setPassword(null);
+        return userDTO;
     }
 
     @Override

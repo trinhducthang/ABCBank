@@ -26,11 +26,12 @@ public class SecurityConfig {
     private final String[] PUBLIC_POST_ENDPOINTS = {
             "/auth/token",
             "/auth/introspect",
-            "/user/create"
+            "/user/create",
+            "/bank/create"
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS ={
-
+            "/user/**"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
