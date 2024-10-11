@@ -10,6 +10,8 @@ import com.ducthang._footbank.service.itf.AccountBankService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class AccountBankServiceImpl implements AccountBankService {
@@ -26,8 +28,33 @@ public class AccountBankServiceImpl implements AccountBankService {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
         AccountBank accountBankEntity = accountBankMapper.toEntity(accountBank);
         accountBankEntity.setUser(user);
+        accountBankEntity.setBalance(BigDecimal.valueOf(0));
         accountRepository.save(accountBankEntity);
         accountBank.setUserId(id);
         return accountBank;
     }
+
+    @Override
+    public AccountBankDTO getAccountBank(long id) {
+        AccountBank accountBank = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
+        return accountBankMapper.toDTO(accountBank);
+    }
+
+    @Override
+    public AccountBankDTO updateAccountBank(long id, AccountBankDTO accountBank) {
+        AccountBank accountBankEntity = accountBankMapper.toEntity(accountBank);
+        accountBankEntity.setId(id);
+        accountRepository.save(accountBankEntity);
+        accountBank.setUserId(id);
+        return accountBank;
+    }
+
+    @Override
+    public boolean deleteAccountBank(long id) {
+        AccountBank accountBank = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
+        accountRepository.delete(accountBank);
+        return true;
+    }
+
+
 }
