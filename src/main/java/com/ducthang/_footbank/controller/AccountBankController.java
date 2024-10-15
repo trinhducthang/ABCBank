@@ -31,4 +31,21 @@ public class AccountBankController {
                     .build();
         }
     }
+
+    @GetMapping("/info")
+    public ApiResponse<AccountBankDTO> info(@RequestParam long id) {
+        try {
+            return ApiResponse.<AccountBankDTO>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Get success")
+                    .result(accountBankService.getAccountBank(id))
+                    .build();
+        }
+        catch (Exception e) {
+            return ApiResponse.<AccountBankDTO>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
 }

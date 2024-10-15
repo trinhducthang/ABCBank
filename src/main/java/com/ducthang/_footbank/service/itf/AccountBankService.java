@@ -12,4 +12,5 @@ public interface AccountBankService {
     public AccountBankDTO updateAccountBank(long id, AccountBankDTO accountBank);
 
     public boolean deleteAccountBank(long id);
+
 }

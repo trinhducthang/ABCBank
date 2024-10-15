@@ -27,11 +27,13 @@ public class SecurityConfig {
             "/auth/token",
             "/auth/introspect",
             "/user/create",
-            "/bank/create"
+            "/bank/create",
+            "/api/v1/**"
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS ={
-            "/user/**"
+            "/user/**",
+            "/api/v1/**"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
