@@ -1,6 +1,7 @@
 package com.ducthang._footbank.payment;
 
 import com.ducthang._footbank.dto.response.ApiResponse;
+import com.ducthang._footbank.repository.AccountRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
+
     @GetMapping("/vn-pay")
     public ApiResponse<PaymentDTO.VNPayResponse> pay(HttpServletRequest request) {
         return ApiResponse.<PaymentDTO.VNPayResponse>builder()
@@ -28,7 +30,7 @@ public class PaymentController {
               return ApiResponse.<PaymentDTO.VNPayResponse>builder()
                       .code(HttpStatus.OK.value())
                       .message("OK")
-                      .result(new PaymentDTO.VNPayResponse("00","success",""))
+                      .result(paymentService.payCallbackHandler(request))
                       .build();
         } else {
             return ApiResponse.<PaymentDTO.VNPayResponse>builder()

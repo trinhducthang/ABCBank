@@ -28,7 +28,7 @@ public class AccountBankServiceImpl implements AccountBankService {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
         AccountBank accountBankEntity = accountBankMapper.toEntity(accountBank);
         accountBankEntity.setUser(user);
-        accountBankEntity.setBalance(BigDecimal.valueOf(0));
+        accountBankEntity.setBalance(BigDecimal.valueOf(00.00));
         accountRepository.save(accountBankEntity);
         accountBank.setUserId(id);
         return accountBank;
