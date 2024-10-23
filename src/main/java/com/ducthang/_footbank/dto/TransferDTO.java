@@ -2,13 +2,10 @@ package com.ducthang._footbank.dto;
 
 import jakarta.persistence.*;
 
-@Entity
-@Table
+import java.math.BigDecimal;
+
 public class TransferDTO {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
+    public BigDecimal amount;
+    public String bankNumber;
 
 }

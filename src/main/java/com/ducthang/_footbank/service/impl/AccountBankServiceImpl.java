@@ -56,5 +56,22 @@ public class AccountBankServiceImpl implements AccountBankService {
         return true;
     }
 
+    @Override
+    public AccountBankDTO transferMoney(String from, String to, BigDecimal amount) {
+        AccountBank bank = accountRepository.findByAccountNumber(from);
+        AccountBank accountBank = accountRepository.findByAccountNumber(to);
+        if (bank == null) {
+            throw new RuntimeException("user not found");
+        }
+        if (accountBank == null) {
+            throw new RuntimeException("user destination not found");
+        }
+        accountBank.setBalance(accountBank.getBalance().add(amount));
+        accountRepository.save(accountBank);
+        bank.setBalance(accountBank.getBalance().subtract(amount));
+        accountRepository.save(bank);
+        return accountBankMapper.toDTO(bank);
+    }
+
 
 }

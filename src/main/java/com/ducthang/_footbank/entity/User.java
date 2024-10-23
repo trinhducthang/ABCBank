@@ -44,6 +44,9 @@ public class User {
     @Lob
     private String address;
 
+    @OneToOne(mappedBy = "user")
+    private Loan loans;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
