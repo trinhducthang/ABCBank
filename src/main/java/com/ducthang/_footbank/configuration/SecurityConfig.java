@@ -28,12 +28,17 @@ public class SecurityConfig {
             "/auth/introspect",
             "/user/create",
             "/bank/create",
-            "/api/v1/**"
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS ={
             "/user/**",
-            "/api/v1/**"
+            "/api/v1/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
