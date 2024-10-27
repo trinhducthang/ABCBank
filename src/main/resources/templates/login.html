@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form đăng nhập</title>
+    <link rel="stylesheet" href="/css/loginStyle.css">
+    <link rel="icon" type="image/x-icon" href="/imgs/favicon.png"/>
+</head>
+<body>
+<div class="container">
+    <form id="loginForm">
+        <h2>Đăng nhập</h2>
+        <div class="input-group">
+            <label for="username">Tên đăng nhập:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Mật khẩu:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Đăng nhập</button>
+        <button type="button" class="google-login-btn" onclick="window.location.href='/oauth2/authorization/google'">Đăng nhập bằng Google</button>
+        <div class="signup-link">
+            <p>Chưa có tài khoản? <a href="/signup">Đăng ký ngay</a></p>
+        </div>
+    </form>
+</div>
+<script src="/js/loginJs.js"> </script>
+</body>
+</html>

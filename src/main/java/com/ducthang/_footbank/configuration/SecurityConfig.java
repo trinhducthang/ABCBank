@@ -28,6 +28,7 @@ public class SecurityConfig {
             "/auth/introspect",
             "/user/create",
             "/bank/create",
+            "/bank/transfer",
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
@@ -38,11 +39,17 @@ public class SecurityConfig {
             "/api/v1/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/bank/**",
+            "/bank-summary"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
-
+        "/css/loginStyle.css",
+            "/login",
+            "/js/loginJs.js",
+            "/dashboard",
+            "/transactions/**"
 
     };
 

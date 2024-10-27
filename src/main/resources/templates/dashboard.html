@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav li {
+            display: inline;
+            margin: 0 15px;
+        }
+        main {
+            padding: 20px;
+        }
+        section {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap; /* Cho phép các biểu đồ xuống dòng nếu cần */
+        }
+        canvas {
+            max-width: 45%; /* Đặt chiều rộng tối đa cho mỗi biểu đồ */
+            height: 200px; /* Kích thước chiều cao biểu đồ */
+            margin: 10px; /* Giảm khoảng cách giữa các biểu đồ */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>
+    <h1>Dashboard</h1>
+</header>
+<main>
+    <section>
+        <h2>Danh sách người dùng</h2>
+        <input type="text" id="searchUser" placeholder="Tìm kiếm người dùng..." onkeyup="filterUsers()" />
+        <table id="userTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Trạng thái</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Các hàng sẽ được thêm vào từ API -->
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Bảng số liệu giao dịch</h2>
+        <table id="transactionTable">
+            <thead>
+            <tr>
+                <th>Số tài khoản</th>
+                <th>Số lượng giao dịch</th>
+                <th>Tổng số tiền</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Dữ liệu giao dịch sẽ được thêm vào từ API -->
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Biểu đồ số liệu giao dịch</h2>
+        <div class="chart-container">
+            <canvas id="transactionSumChart"></canvas>
+            <canvas id="transactionCountChart"></canvas>
+        </div>
+    </section>
+</main>
+<footer>
+    <p>&copy; 2024 Trinh Duc Thang. Bảo lưu mọi quyền.</p>
+</footer>
+
+<script>
+    // Gọi API lấy danh sách người dùng
+    async function fetchUsers() {
+        try {
+            const response = await fetch('/user');
+            const data = await response.json();
+            if (data.code === 200) {
+                renderUsers(data.result);
+            } else {
+                console.error("Error fetching users:", data.message);
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+        }
+    }
+
+    // Render dữ liệu người dùng vào bảng
+    function renderUsers(users) {
+        const tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Xóa dữ liệu cũ nếu có
+        users.forEach(user => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.firstName || ''} ${user.lastName || ''}</td>
+                <td>${user.email || ''}</td>
+                <td>${user.phone || ''}</td>
+                <td>${user.status || 'Đang hoạt động'}</td>
+            `;
+        });
+    }
+
+    // Hàm tìm kiếm người dùng
+    function filterUsers() {
+        const input = document.getElementById('searchUser');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('userTable');
+        const trs = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < trs.length; i++) {
+            const td = trs[i].getElementsByTagName('td');
+            let match = false;
+            for (let j = 0; j < td.length; j++) {
+                if (td[j] && td[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+            trs[i].style.display = match ? '' : 'none';
+        }
+    }
+
+    // Gọi API lấy số liệu giao dịch
+    async function fetchTransactionSummary() {
+        try {
+            const response = await fetch('http://localhost:8888/bank-summary');
+            const data = await response.json();
+            if (data.code === 200) {
+                renderTransactionSummary(data.result);
+                renderCharts(data.result);
+            } else {
+                console.error("Error fetching transaction summary:", data.message);
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+        }
+    }
+
+    // Render dữ liệu giao dịch vào bảng
+    function renderTransactionSummary(transactions) {
+        const tableBody = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Xóa dữ liệu cũ nếu có
+        transactions.forEach(transaction => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${transaction.bankNumber}</td>
+                <td>${transaction.transactionCount}</td>
+                <td>${transaction.transactionSum.toLocaleString()} VNĐ</td>
+            `;
+        });
+    }
+
+    // Render cả hai biểu đồ
+    function renderCharts(transactions) {
+        const labels = transactions.map(t => t.bankNumber);
+        const sums = transactions.map(t => t.transactionSum);
+        const counts = transactions.map(t => t.transactionCount);
+
+        const ctxSum = document.getElementById('transactionSumChart').getContext('2d');
+        const transactionSumChart = new Chart(ctxSum, {
+            type: 'bar', // Biểu đồ tổng số tiền giao dịch
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Tổng số tiền giao dịch',
+                    data: sums,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString(); // Định dạng số
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const ctxCount = document.getElementById('transactionCountChart').getContext('2d');
+        const transactionCountChart = new Chart(ctxCount, {
+            type: 'bar', // Biểu đồ số lượng giao dịch
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng giao dịch',
+                    data: counts,
+                    backgroundColor: 'rgba(153, 102, 255, 0.5)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString(); // Định dạng số
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gọi API khi tải trang
+    window.onload = () => {
+        fetchUsers();
+        fetchTransactionSummary();
+    };
+</script>
+</body>
+</html>

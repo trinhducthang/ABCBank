@@ -56,7 +56,6 @@ public class AuthenticationController {
                     .build();
         }
         catch (RuntimeException e){
-
             return ApiResponse.<IntrospectResponse>builder()
                     .code(HttpStatus.BAD_REQUEST.value())
                     .build();

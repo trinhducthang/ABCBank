@@ -18,5 +18,4 @@ public class SwaggerConfig {
                         .description("API Documentation"));
     }
 
-
 }
