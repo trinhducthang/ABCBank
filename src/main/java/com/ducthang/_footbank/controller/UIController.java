@@ -17,4 +17,8 @@ public class UIController {
     }
 
 
+    @GetMapping("/loanOffers")
+    public String loanOffers() {
+        return "loanOffer";
+    }
 }

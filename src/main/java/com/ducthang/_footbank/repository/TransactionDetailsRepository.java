@@ -21,6 +21,7 @@ public interface TransactionDetailsRepository extends JpaRepository<TransactionD
             "GROUP BY t.bankNumber")
     List<BankTransactionSummary> getTransactionSummaryByBankNumber();
 
+
     interface BankTransactionSummary {
         String getBankNumber();
         long getTransactionCount();

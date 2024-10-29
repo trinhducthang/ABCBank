@@ -8,5 +8,5 @@ import java.util.List;
 @Service
 public interface LoanService {
     public List<Loan> getLoans();
-    public Loan createLoan(Loan loan);
+    public Loan createLoan(Long id);
 }
