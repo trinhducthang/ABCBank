@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -87,7 +88,7 @@ public class UserController {
         }
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     public ApiResponse<List<UserDTO>> getAllUsers(){
         return ApiResponse.<List<UserDTO>>builder()
                 .code(HttpStatus.OK.value())
@@ -106,6 +107,18 @@ public class UserController {
                                @RequestParam(defaultValue = "5") int size) {
         return userRepository.findAll(PageRequest.of(page, size));
     }
+
+    @GetMapping("/user-registration/by-day")
+    public ApiResponse<List<Long>> getUserRegistrationCountByDayOfMonth(
+            @RequestParam int year, @RequestParam int month) {
+        List<Long> dailyUserCounts = userService.getUserRegistrationCountByMonthAndDay(year, month);
+        return ApiResponse.<List<Long>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get daily registration count for the specified month success!")
+                .result(dailyUserCounts)
+                .build();
+    }
+
 
 
 }

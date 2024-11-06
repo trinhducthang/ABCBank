@@ -58,9 +58,4 @@ public class TransactionDetailsController {
     }
 
 
-    @GetMapping
-    public Page<TransactionDetails> getTransactions(@RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "5") int size) {
-        return transactionDetailsRepository.findAll(PageRequest.of(page, size));
-    }
 }

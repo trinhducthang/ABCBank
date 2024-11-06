@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +116,23 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user1);
         return user;
     }
+
+    public List<Long> getUserRegistrationCountByMonthAndDay(int year, int month) {
+        // Tạo danh sách các ngày trong tháng
+        List<Long> userCountsPerDay = new ArrayList<>();
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);  // Ngày đầu tiên của tháng
+        int lengthOfMonth = startOfMonth.lengthOfMonth();  // Số ngày trong tháng
+
+        // Lặp qua từng ngày trong tháng và lấy số lượng người dùng đăng ký
+        for (int day = 1; day <= lengthOfMonth; day++) {
+            LocalDateTime startOfDay = LocalDate.of(year, month, day).atStartOfDay();
+            LocalDateTime endOfDay = LocalDate.of(year, month, day).atTime(23, 59, 59);
+            Long count = userRepository.countUsersByCreatedAtRange(startOfDay, endOfDay);
+            userCountsPerDay.add(count);
+        }
+        return userCountsPerDay;
+    }
+
 
     public boolean checkOverlap(User user) {
         return userRepository.findByUsername(user.getUsername()).isPresent();

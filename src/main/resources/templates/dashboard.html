@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin</title>
     <style>
-        /* Các CSS ban đầu */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -16,6 +15,14 @@
             color: white;
             padding: 10px;
             text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav li {
+            display: inline;
+            margin: 0 15px;
         }
         main {
             padding: 20px;
@@ -39,39 +46,66 @@
             background: #f2f2f2;
         }
         .pagination {
-            margin-top: 10px;
             display: flex;
             justify-content: center;
+            margin-top: 10px;
         }
         .pagination button {
-            background: #4CAF50;
-            color: white;
-            border: none;
             padding: 5px 10px;
-            margin: 2px;
+            margin: 0 2px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
             cursor: pointer;
         }
-        .chart-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
+        .pagination button.active {
+            background-color: #3e8e41;
         }
-        canvas {
-            max-width: 45%;
-            height: 200px;
-            margin: 10px;
+        /* CSS cho phần tử loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .spinner {
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
+    <!-- Thêm link tới Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <header>
     <h1>Dashboard</h1>
 </header>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
 <main>
     <section>
         <h2>Danh sách người dùng</h2>
-        <input type="text" id="searchUser" placeholder="Tìm kiếm người dùng..." onkeyup="filterUsers()" />
         <table id="userTable">
             <thead>
             <tr>
@@ -84,71 +118,52 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Dữ liệu người dùng sẽ được thêm từ API -->
             </tbody>
         </table>
-        <div class="pagination" id="userPagination"></div>
+        <div id="userPagination" class="pagination"></div>
     </section>
 
+    <!-- Thêm section để hiển thị biểu đồ -->
     <section>
-        <h2>Bảng số liệu giao dịch</h2>
-        <table id="transactionTable">
-            <thead>
-            <tr>
-                <th>Số tài khoản</th>
-                <th>Số lượng giao dịch</th>
-                <th>Tổng số tiền</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Dữ liệu giao dịch sẽ được thêm từ API -->
-            </tbody>
-        </table>
-        <div class="pagination" id="transactionPagination"></div>
-    </section>
-
-    <section>
-        <h2>Biểu đồ số liệu giao dịch</h2>
-        <div class="chart-container">
-            <canvas id="transactionSumChart"></canvas>
-            <canvas id="transactionCountChart"></canvas>
-        </div>
+        <h2>Biểu đồ số lượng người dùng đăng ký</h2>
+        <canvas id="userRegistrationChart" width="400" height="200"></canvas>
     </section>
 </main>
+
 <footer>
     <p>&copy; 2024 Trinh Duc Thang. Bảo lưu mọi quyền.</p>
 </footer>
 
 <script>
+    let currentPageUsers = 0;
     const USERS_PER_PAGE = 5;
-    const TRANSACTIONS_PER_PAGE = 5;
-    let currentPageUsers = 1;
-    let currentPageTransactions = 1;
-    let allUsers = [];
-    let allTransactions = [];
 
-    async function fetchUsers() {
+    // Hiển thị loading overlay
+    function showLoading() {
+        document.getElementById("loadingOverlay").classList.add("active");
+    }
+
+    // Ẩn loading overlay
+    function hideLoading() {
+        document.getElementById("loadingOverlay").classList.remove("active");
+    }
+
+    // Gọi API lấy danh sách người dùng
+    async function fetchUsers(page = 0) {
+        showLoading(); // Hiển thị overlay khi bắt đầu gọi API
         try {
-            const response = await fetch('/api/users');
+            const response = await fetch(`/api/users?page=${page}&size=${USERS_PER_PAGE}`);
             const data = await response.json();
-            if (data.code === 200) {
-                allUsers = data.result;
-                paginateUsers(currentPageUsers);
-            } else {
-                console.error("Error fetching users:", data.message);
-            }
+            renderUsers(data.content);
+            renderPagination(data.totalPages, page, 'userPagination', fetchUsers);
         } catch (error) {
             console.error("Network error:", error);
+        } finally {
+            hideLoading(); // Ẩn overlay khi API đã xử lý xong
         }
     }
 
-    function paginateUsers(page) {
-        const start = (page - 1) * USERS_PER_PAGE;
-        const end = start + USERS_PER_PAGE;
-        renderUsers(allUsers.slice(start, end));
-        renderPagination(allUsers.length, USERS_PER_PAGE, page, 'userPagination', paginateUsers);
-    }
-
+    // Render dữ liệu người dùng vào bảng
     function renderUsers(users) {
         const tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = '';
@@ -165,97 +180,81 @@
         });
     }
 
-    async function fetchTransactionSummary() {
-        try {
-            const response = await fetch('http://localhost:8888/bank-summary');
-            const data = await response.json();
-            if (data.code === 200) {
-                allTransactions = data.result;
-                paginateTransactions(currentPageTransactions);
-                renderCharts(allTransactions);
-            } else {
-                console.error("Error fetching transaction summary:", data.message);
-            }
-        } catch (error) {
-            console.error("Network error:", error);
-        }
-    }
-
-    function paginateTransactions(page) {
-        const start = (page - 1) * TRANSACTIONS_PER_PAGE;
-        const end = start + TRANSACTIONS_PER_PAGE;
-        renderTransactionSummary(allTransactions.slice(start, end));
-        renderPagination(allTransactions.length, TRANSACTIONS_PER_PAGE, page, 'transactionPagination', paginateTransactions);
-    }
-
-    function renderTransactionSummary(transactions) {
-        const tableBody = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
-        tableBody.innerHTML = '';
-        transactions.forEach(transaction => {
-            const row = tableBody.insertRow();
-            row.innerHTML = `
-                <td>${transaction.bankNumber}</td>
-                <td>${transaction.transactionCount}</td>
-                <td>${transaction.transactionSum.toLocaleString()} VNĐ</td>
-            `;
-        });
-    }
-
-    function renderPagination(totalItems, itemsPerPage, currentPage, containerId, callback) {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
+    // Render các nút phân trang
+    function renderPagination(totalPages, currentPage, containerId, callback) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
-
-        for (let i = 1; i <= totalPages; i++) {
+        for (let i = 0; i < totalPages; i++) {
             const button = document.createElement('button');
-            button.textContent = i;
+            button.textContent = i + 1;
             button.onclick = () => callback(i);
             if (i === currentPage) {
-                button.style.backgroundColor = '#3e8e41';
+                button.classList.add('active');
             }
             container.appendChild(button);
         }
     }
 
-    function renderCharts(transactions) {
-        const labels = transactions.map(t => t.bankNumber);
-        const sums = transactions.map(t => t.transactionSum);
-        const counts = transactions.map(t => t.transactionCount);
+    // Gọi API lấy dữ liệu số lượng người dùng đăng ký theo ngày trong tháng
+    async function fetchUserRegistrationDataByMonth(year, month) {
+        try {
+            const response = await fetch(`/api/users/user-registration/by-day?year=${year}&month=${month}`);
+            const data = await response.json();
+            console.log(data);  // Kiểm tra dữ liệu trả về từ API
 
-        new Chart(document.getElementById('transactionSumChart').getContext('2d'), {
-            type: 'bar',
+            if (data.result && Array.isArray(data.result)) {
+                const userCounts = data.result; // Dữ liệu số lượng người dùng đăng ký mỗi ngày
+                const labels = [];
+                const daysInMonth = new Date(year, month, 0).getDate(); // Lấy số ngày trong tháng
+
+                // Tạo nhãn cho từng ngày trong tháng
+                for (let day = 1; day <= daysInMonth; day++) {
+                    labels.push(`${day}-${month < 10 ? '0' + month : month}-${year}`);
+                }
+
+                // Vẽ biểu đồ với dữ liệu lấy từ API
+                renderUserRegistrationChart(labels, userCounts);
+            } else {
+                console.error("Dữ liệu trả về không hợp lệ:", data);
+            }
+        } catch (error) {
+            console.error("Error fetching user registration data:", error);
+        }
+    }
+
+
+    // Hàm vẽ biểu đồ Line Chart
+    function renderUserRegistrationChart(labels, data) {
+        const ctx = document.getElementById('userRegistrationChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Tổng số tiền giao dịch',
-                    data: sums,
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    label: 'Số lượng người dùng đăng ký',
+                    data: data,
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    fill: false,
+                    tension: 0.1
                 }]
             },
-            options: { responsive: true, scales: { y: { beginAtZero: true } } }
-        });
-
-        new Chart(document.getElementById('transactionCountChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Số lượng giao dịch',
-                    data: counts,
-                    backgroundColor: 'rgba(153, 102, 255, 0.5)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
         });
     }
 
+    // Gọi API khi tải trang
     window.onload = () => {
-        fetchUsers();
-        fetchTransactionSummary();
+        fetchUsers(currentPageUsers); // Lấy danh sách người dùng
+        const year = 2024; // Năm bạn muốn hiển thị
+        const month = 11;  // Tháng bạn muốn hiển thị (11 cho tháng 11)
+        fetchUserRegistrationDataByMonth(year, month); // Lấy số liệu đăng ký người dùng theo ngày trong tháng
     };
 </script>
 </body>

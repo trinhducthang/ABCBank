@@ -23,8 +23,6 @@ public interface TransactionDetailsRepository extends JpaRepository<TransactionD
             "GROUP BY t.bankNumber")
     List<BankTransactionSummary> getTransactionSummaryByBankNumber();
 
-    Page<TransactionDetails> findAll(Pageable pageable);
-
 
     interface BankTransactionSummary {
         String getBankNumber();
