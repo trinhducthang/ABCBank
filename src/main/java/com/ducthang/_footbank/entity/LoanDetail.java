@@ -20,7 +20,6 @@ public class LoanDetail {
 
     private BigDecimal paymentAmount;
     private BigDecimal paymentAmountPaid;
-    private BigDecimal outstanding;
     private LocalDate paymentDate;
     private String paymentStatus;
 

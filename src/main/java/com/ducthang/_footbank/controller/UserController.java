@@ -2,19 +2,24 @@ package com.ducthang._footbank.controller;
 
 import com.ducthang._footbank.dto.UserDTO;
 import com.ducthang._footbank.dto.response.ApiResponse;
+import com.ducthang._footbank.entity.User;
+import com.ducthang._footbank.repository.UserRepository;
 import com.ducthang._footbank.service.itf.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @PostMapping("/create")
     public ApiResponse<UserDTO> createUser(@Valid @RequestBody UserDTO user){
@@ -89,6 +94,17 @@ public class UserController {
                 .message("Get all users success!")
                 .result(userService.getUsers())
                 .build();
+    }
+
+    @GetMapping("/generate-users")
+    public List<UserDTO> generateUsers() {
+        return userService.create100Users();
+    }
+
+    @GetMapping
+    public Page<User> getUsers(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "5") int size) {
+        return userRepository.findAll(PageRequest.of(page, size));
     }
 
 

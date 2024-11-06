@@ -1,10 +1,13 @@
 package com.ducthang._footbank.controller;
 
 import com.ducthang._footbank.dto.response.ApiResponse;
+import com.ducthang._footbank.entity.TransactionDetails;
 import com.ducthang._footbank.repository.TransactionDetailsRepository;
 import com.ducthang._footbank.service.itf.TransactionDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +24,7 @@ import java.util.Map;
 public class TransactionDetailsController {
 
     private final TransactionDetailsService transactionDetailsService;
+    private final TransactionDetailsRepository transactionDetailsRepository;
 
     @GetMapping("/transactions/stats")
     public ApiResponse<Map<String, Object>> getTransactionStatsByDateAndBankNumber(
@@ -51,5 +55,12 @@ public class TransactionDetailsController {
                 .message("Get bank transaction summary success!")
                 .result(summary)
                 .build();
+    }
+
+
+    @GetMapping
+    public Page<TransactionDetails> getTransactions(@RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "5") int size) {
+        return transactionDetailsRepository.findAll(PageRequest.of(page, size));
     }
 }

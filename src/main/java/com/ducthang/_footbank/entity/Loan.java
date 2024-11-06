@@ -21,4 +21,6 @@ public class Loan {
     private LoanOffer loanOffer; // Tham chiếu đến LoanOffer
 
     private String status;
+
+
 }

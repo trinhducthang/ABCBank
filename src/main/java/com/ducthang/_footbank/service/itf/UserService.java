@@ -12,4 +12,6 @@ public interface UserService {
     public UserDTO getUser(Long id);
     public List<UserDTO> getUsers();
     public UserDTO updateUser(UserDTO user);
+
+    public List<UserDTO> create100Users();
 }

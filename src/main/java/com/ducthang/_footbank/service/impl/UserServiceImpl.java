@@ -2,6 +2,7 @@ package com.ducthang._footbank.service.impl;
 
 import com.ducthang._footbank.dto.UserDTO;
 import com.ducthang._footbank.entity.User;
+import com.ducthang._footbank.entity.enum_.Gender;
 import com.ducthang._footbank.entity.enum_.Role;
 import com.ducthang._footbank.mapper.UserMapper;
 import com.ducthang._footbank.repository.UserRepository;
@@ -37,6 +38,49 @@ public class UserServiceImpl implements UserService {
         user.setPassword("**************");
         userRepository.save(createUser);
         return user;
+    }
+
+    public List<UserDTO> create100Users() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        for (int i = 0; i < 100; i++) {
+            UserDTO userDTO = new UserDTO();
+
+            // Tạo dữ liệu giả cho các trường trong UserDTO
+            userDTO.setUsername("user" + (i + 1));  // Tạo username ngẫu nhiên: user1, user2, ...
+            userDTO.setPassword("thang");  // Mật khẩu mặc định
+            userDTO.setFirstName("FirstName" + (i + 1));  // Tên giả
+            userDTO.setLastName("LastName" + (i + 1));  // Họ giả
+            userDTO.setEmail("user" + (i + 1) + "@example.com");  // Email giả
+            userDTO.setPhone("123456789" + i);  // Số điện thoại giả
+            userDTO.setDob(new java.util.Date());  // Ngày sinh giả
+            userDTO.setGender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE);  // Giới tính giả (nam/nữ luân phiên)
+            userDTO.setAddress("Address " + (i + 1));  // Địa chỉ giả
+
+            // Mã hóa mật khẩu
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));  // Mã hóa mật khẩu "thang"
+
+            // Kiểm tra trùng lặp (nếu có)
+            if (checkOverlap(userMapper.toEntity(userDTO))) {
+                throw new RuntimeException("username already exists");
+            }
+
+            // Chuyển từ UserDTO sang User entity
+            User user = userMapper.toEntity(userDTO);
+            user.setCreatedAt(LocalDateTime.now());
+            user.setUpdatedAt(LocalDateTime.now());
+            user.setRole(Role.CLIENT);  // Giả sử mặc định role là CLIENT
+
+            // Lưu người dùng vào CSDL
+            userRepository.save(user);
+
+            // Ẩn mật khẩu trong UserDTO trước khi trả về
+            userDTO.setPassword("**************");
+
+            // Thêm UserDTO vào danh sách trả về
+            userDTOList.add(userDTO);
+        }
+        return userDTOList;
     }
 
     @Override

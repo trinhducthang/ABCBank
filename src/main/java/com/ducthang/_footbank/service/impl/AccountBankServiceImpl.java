@@ -42,7 +42,9 @@ public class AccountBankServiceImpl implements AccountBankService {
     @Override
     public AccountBankDTO getAccountBank(long id) {
         AccountBank accountBank = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
-        return accountBankMapper.toDTO(accountBank);
+        AccountBankDTO accountBankDTO = accountBankMapper.toDTO(accountBank);
+        accountBankDTO.setUserId(id);
+        return accountBankDTO;
     }
 
     @Override
@@ -65,8 +67,11 @@ public class AccountBankServiceImpl implements AccountBankService {
     public AccountBankDTO transferMoney(String from, String to, BigDecimal amount) {
         AccountBank bank = accountRepository.findByAccountNumber(from);
         AccountBank accountBank = accountRepository.findByAccountNumber(to);
+        if(from.equals(to)) {
+            throw new RuntimeException("duplicate from and to");
+        }
         if (bank == null) {
-            throw new RuntimeException("user not found");
+            throw new RuntimeException("user source not found");
         }
         if (accountBank == null) {
             throw new RuntimeException("user destination not found");

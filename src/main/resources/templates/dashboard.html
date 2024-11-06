@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin</title>
     <style>
+        /* Các CSS ban đầu */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -15,14 +16,6 @@
             color: white;
             padding: 10px;
             text-align: center;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        nav li {
-            display: inline;
-            margin: 0 15px;
         }
         main {
             padding: 20px;
@@ -45,15 +38,28 @@
         th {
             background: #f2f2f2;
         }
+        .pagination {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .pagination button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 2px;
+            cursor: pointer;
+        }
         .chart-container {
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap; /* Cho phép các biểu đồ xuống dòng nếu cần */
+            flex-wrap: wrap;
         }
         canvas {
-            max-width: 45%; /* Đặt chiều rộng tối đa cho mỗi biểu đồ */
-            height: 200px; /* Kích thước chiều cao biểu đồ */
-            margin: 10px; /* Giảm khoảng cách giữa các biểu đồ */
+            max-width: 45%;
+            height: 200px;
+            margin: 10px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -78,9 +84,10 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Các hàng sẽ được thêm vào từ API -->
+            <!-- Dữ liệu người dùng sẽ được thêm từ API -->
             </tbody>
         </table>
+        <div class="pagination" id="userPagination"></div>
     </section>
 
     <section>
@@ -94,9 +101,10 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Dữ liệu giao dịch sẽ được thêm vào từ API -->
+            <!-- Dữ liệu giao dịch sẽ được thêm từ API -->
             </tbody>
         </table>
+        <div class="pagination" id="transactionPagination"></div>
     </section>
 
     <section>
@@ -112,13 +120,20 @@
 </footer>
 
 <script>
-    // Gọi API lấy danh sách người dùng
+    const USERS_PER_PAGE = 5;
+    const TRANSACTIONS_PER_PAGE = 5;
+    let currentPageUsers = 1;
+    let currentPageTransactions = 1;
+    let allUsers = [];
+    let allTransactions = [];
+
     async function fetchUsers() {
         try {
-            const response = await fetch('/user');
+            const response = await fetch('/api/users');
             const data = await response.json();
             if (data.code === 200) {
-                renderUsers(data.result);
+                allUsers = data.result;
+                paginateUsers(currentPageUsers);
             } else {
                 console.error("Error fetching users:", data.message);
             }
@@ -127,10 +142,16 @@
         }
     }
 
-    // Render dữ liệu người dùng vào bảng
+    function paginateUsers(page) {
+        const start = (page - 1) * USERS_PER_PAGE;
+        const end = start + USERS_PER_PAGE;
+        renderUsers(allUsers.slice(start, end));
+        renderPagination(allUsers.length, USERS_PER_PAGE, page, 'userPagination', paginateUsers);
+    }
+
     function renderUsers(users) {
         const tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
-        tableBody.innerHTML = ''; // Xóa dữ liệu cũ nếu có
+        tableBody.innerHTML = '';
         users.forEach(user => {
             const row = tableBody.insertRow();
             row.innerHTML = `
@@ -144,34 +165,14 @@
         });
     }
 
-    // Hàm tìm kiếm người dùng
-    function filterUsers() {
-        const input = document.getElementById('searchUser');
-        const filter = input.value.toLowerCase();
-        const table = document.getElementById('userTable');
-        const trs = table.getElementsByTagName('tr');
-
-        for (let i = 1; i < trs.length; i++) {
-            const td = trs[i].getElementsByTagName('td');
-            let match = false;
-            for (let j = 0; j < td.length; j++) {
-                if (td[j] && td[j].innerText.toLowerCase().indexOf(filter) > -1) {
-                    match = true;
-                    break;
-                }
-            }
-            trs[i].style.display = match ? '' : 'none';
-        }
-    }
-
-    // Gọi API lấy số liệu giao dịch
     async function fetchTransactionSummary() {
         try {
             const response = await fetch('http://localhost:8888/bank-summary');
             const data = await response.json();
             if (data.code === 200) {
-                renderTransactionSummary(data.result);
-                renderCharts(data.result);
+                allTransactions = data.result;
+                paginateTransactions(currentPageTransactions);
+                renderCharts(allTransactions);
             } else {
                 console.error("Error fetching transaction summary:", data.message);
             }
@@ -180,10 +181,16 @@
         }
     }
 
-    // Render dữ liệu giao dịch vào bảng
+    function paginateTransactions(page) {
+        const start = (page - 1) * TRANSACTIONS_PER_PAGE;
+        const end = start + TRANSACTIONS_PER_PAGE;
+        renderTransactionSummary(allTransactions.slice(start, end));
+        renderPagination(allTransactions.length, TRANSACTIONS_PER_PAGE, page, 'transactionPagination', paginateTransactions);
+    }
+
     function renderTransactionSummary(transactions) {
         const tableBody = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
-        tableBody.innerHTML = ''; // Xóa dữ liệu cũ nếu có
+        tableBody.innerHTML = '';
         transactions.forEach(transaction => {
             const row = tableBody.insertRow();
             row.innerHTML = `
@@ -194,15 +201,29 @@
         });
     }
 
-    // Render cả hai biểu đồ
+    function renderPagination(totalItems, itemsPerPage, currentPage, containerId, callback) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.onclick = () => callback(i);
+            if (i === currentPage) {
+                button.style.backgroundColor = '#3e8e41';
+            }
+            container.appendChild(button);
+        }
+    }
+
     function renderCharts(transactions) {
         const labels = transactions.map(t => t.bankNumber);
         const sums = transactions.map(t => t.transactionSum);
         const counts = transactions.map(t => t.transactionCount);
 
-        const ctxSum = document.getElementById('transactionSumChart').getContext('2d');
-        const transactionSumChart = new Chart(ctxSum, {
-            type: 'bar', // Biểu đồ tổng số tiền giao dịch
+        new Chart(document.getElementById('transactionSumChart').getContext('2d'), {
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
@@ -213,24 +234,11 @@
                     borderWidth: 1
                 }]
             },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString(); // Định dạng số
-                            }
-                        }
-                    }
-                }
-            }
+            options: { responsive: true, scales: { y: { beginAtZero: true } } }
         });
 
-        const ctxCount = document.getElementById('transactionCountChart').getContext('2d');
-        const transactionCountChart = new Chart(ctxCount, {
-            type: 'bar', // Biểu đồ số lượng giao dịch
+        new Chart(document.getElementById('transactionCountChart').getContext('2d'), {
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
@@ -241,23 +249,10 @@
                     borderWidth: 1
                 }]
             },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString(); // Định dạng số
-                            }
-                        }
-                    }
-                }
-            }
+            options: { responsive: true, scales: { y: { beginAtZero: true } } }
         });
     }
 
-    // Gọi API khi tải trang
     window.onload = () => {
         fetchUsers();
         fetchTransactionSummary();

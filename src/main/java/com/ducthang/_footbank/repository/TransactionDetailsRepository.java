@@ -1,6 +1,8 @@
 package com.ducthang._footbank.repository;
 
 import com.ducthang._footbank.entity.TransactionDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +22,8 @@ public interface TransactionDetailsRepository extends JpaRepository<TransactionD
             "FROM TransactionDetails t " +
             "GROUP BY t.bankNumber")
     List<BankTransactionSummary> getTransactionSummaryByBankNumber();
+
+    Page<TransactionDetails> findAll(Pageable pageable);
 
 
     interface BankTransactionSummary {

@@ -26,7 +26,7 @@ public class SecurityConfig {
     private final String[] PUBLIC_POST_ENDPOINTS = {
             "/auth/token",
             "/auth/introspect",
-            "/user/create",
+            "api/users/create",
             "/bank/create",
             "/bank/transfer",
             "/v3/api-docs/**",
@@ -36,7 +36,7 @@ public class SecurityConfig {
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS ={
-            "/user/**",
+            "api/users/**",
             "/api/v1/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",
