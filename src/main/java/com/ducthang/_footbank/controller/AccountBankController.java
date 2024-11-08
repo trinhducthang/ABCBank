@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/bank")
 @RequiredArgsConstructor
@@ -65,5 +67,11 @@ public class AccountBankController {
                     .message(e.getMessage())
                     .build();
         }
+    }
+
+
+    @GetMapping("/info/{id}")
+    public Set<AccountBank> findAccountBank(@PathVariable long id) {
+        return accountBankService.findAccountBank(id);
     }
 }

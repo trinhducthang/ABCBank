@@ -36,12 +36,12 @@ public class SecurityConfig {
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS ={
-            "api/users/**",
+//            "api/users/**",
             "/api/v1/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/bank/**",
+//            "/bank/**",
             "/bank-summary",
             "/loanOffers",
             "/loanOffer"
@@ -58,6 +58,11 @@ public class SecurityConfig {
     };
 
 
+    private final String[] PUBLIC_GET_ROLE_ADMIN ={
+            "/api/users/","api/users/user-registration/**",
+    };
+
+
     @Value("${jwt.signerKey}")
     private String signerKey;
 
@@ -67,7 +72,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET,PUBLIC_GET_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_UI_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user", "/getBanks").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROLE_ADMIN ).hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
 //                .oauth2Login(oauth2 -> oauth2
@@ -75,10 +80,10 @@ public class SecurityConfig {
 //                        .defaultSuccessUrl("/oauth2/loginSuccess",true)
 //                        .failureUrl("/oauth2/loginFailure")
 //                )
-//                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
-//                        .decoder(jwtDecoder())
-//                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
-//                ))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
+                        .decoder(jwtDecoder())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                ))
                 .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();

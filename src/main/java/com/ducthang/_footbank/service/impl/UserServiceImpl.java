@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         createUser.setUpdatedAt(LocalDateTime.now());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         createUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        createUser.setRole(Role.CLIENT);
+        createUser.setRole(Role.USER);
         user.setPassword("**************");
         userRepository.save(createUser);
         return user;
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
             User user = userMapper.toEntity(userDTO);
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
-            user.setRole(Role.CLIENT);  // Giả sử mặc định role là CLIENT
+            user.setRole(Role.USER);  // Giả sử mặc định role là CLIENT
 
             // Lưu người dùng vào CSDL
             userRepository.save(user);

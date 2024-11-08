@@ -59,5 +59,10 @@ public class User {
     @JsonManagedReference
     private Set<AccountBank> accountBanks;
 
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.DETACH)
+    @JsonManagedReference
+    private FastLoan fastLoan;
+
 }
 

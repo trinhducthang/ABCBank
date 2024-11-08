@@ -1,9 +1,11 @@
 package com.ducthang._footbank.service.itf;
 
 import com.ducthang._footbank.dto.AccountBankDTO;
+import com.ducthang._footbank.entity.AccountBank;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Service
 public interface AccountBankService {
@@ -16,4 +18,7 @@ public interface AccountBankService {
     public boolean deleteAccountBank(long id);
 
     public AccountBankDTO transferMoney(String from, String to, BigDecimal amount);
+
+
+    public Set<AccountBank> findAccountBank(Long userId);
 }

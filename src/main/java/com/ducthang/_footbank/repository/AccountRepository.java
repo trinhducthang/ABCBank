@@ -4,7 +4,10 @@ import com.ducthang._footbank.entity.AccountBank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 @Repository
 public interface AccountRepository extends JpaRepository<AccountBank, Long> {
     AccountBank findByAccountNumber(String accountNumber);
+    Set<AccountBank> findByUserId(Long userId);
 }

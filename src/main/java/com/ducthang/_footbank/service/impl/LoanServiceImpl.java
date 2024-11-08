@@ -1,9 +1,6 @@
 package com.ducthang._footbank.service.impl;
 
-import com.ducthang._footbank.entity.AccountBank;
-import com.ducthang._footbank.entity.Loan;
-import com.ducthang._footbank.entity.LoanOffer;
-import com.ducthang._footbank.entity.User;
+import com.ducthang._footbank.entity.*;
 import com.ducthang._footbank.repository.AccountRepository;
 import com.ducthang._footbank.repository.LoanOfferRepository;
 import com.ducthang._footbank.repository.LoanRepository;
@@ -41,7 +38,7 @@ public class LoanServiceImpl implements LoanService {
         loan.setUser(user);
         loan.setLoanOffer(loanOffer);
         loan.setStatus("Completed");
-        Set<AccountBank> accountBanks = user.getAccountBanks();
+        Set<AccountBank> accountBanks = accountRepository.findByUserId(userId);
         if (accountBanks != null) {
             throw new RuntimeException("Your account bank not exits");
         }
@@ -52,6 +49,16 @@ public class LoanServiceImpl implements LoanService {
         return loanRepository.save(loan);
     }
 
+    @Override
+    public LoanDetail fastLoan(Long userId) {
+        Set<AccountBank> accountBanks = accountRepository.findByUserId(userId);
+        if (accountBanks != null) {
+            throw new RuntimeException("Your account bank not exits");
+        }
+
+        return null;
+    }
+
     private boolean checkExits(Long userId){
         User user = userRepository.findById(userId).get();
         if (user.getLoans() == null){
@@ -59,6 +66,10 @@ public class LoanServiceImpl implements LoanService {
         }
         else throw new RuntimeException("This account has existed loans");
     }
+
+
+
+
 
 
 }

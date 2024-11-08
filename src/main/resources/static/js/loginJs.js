@@ -19,11 +19,16 @@ const checkTokenAndRedirect = () => {
         })
             .then(response => response.json())
             .then(data => {
-                if (data.code === 200 && data.result && data.result.valid === true) { // Kiểm tra mã phản hồi thành công (200) và sự hiện diện của kết quả
-                    // Chuyển hướng đến trang /home nếu token hợp lệ
-                    window.location.href = '/home';
+                if (data.code === 200 && data.result && data.result.valid === true) {
+                    // Kiểm tra nếu username là "admin", chuyển đến /dashboard, nếu không chuyển đến /home
+                    if (username === 'admin') {
+                        window.location.href = '/dashboard';
+                    } else {
+                        window.location.href = '/home';
+                    }
                 } else {
                     // Token không hợp lệ, thực hiện hành động khác nếu cần
+                    alert('Token không hợp lệ, vui lòng đăng nhập lại.');
                 }
             })
             .catch(error => {
@@ -31,6 +36,7 @@ const checkTokenAndRedirect = () => {
             });
     } else {
         // Không có token hoặc username, thực hiện hành động khác nếu cần
+        alert('Bạn cần đăng nhập trước khi tiếp tục.');
     }
 };
 
@@ -66,8 +72,12 @@ loginForm.addEventListener('submit', (event) => {
                 localStorage.setItem('jwtToken', data.result.token);
                 localStorage.setItem('username', username);
 
-                // Chuyển hướng đến trang /home
-                window.location.href = '/home';
+                // Kiểm tra nếu username là "admin", chuyển đến /dashboard, nếu không chuyển đến /home
+                if (username === 'admin') {
+                    window.location.href = '/dashboard';
+                } else {
+                    window.location.href = '/home';
+                }
             } else {
                 alert('Đăng nhập thất bại! ' + data.message); // Hiển thị thông báo lỗi từ phản hồi
             }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class AccountBankServiceImpl implements AccountBankService {
 
     @Override
     public AccountBankDTO getAccountBank(long id) {
-        AccountBank accountBank = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
+        AccountBank accountBank = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("bank not found"));
         AccountBankDTO accountBankDTO = accountBankMapper.toDTO(accountBank);
         accountBankDTO.setUserId(id);
         return accountBankDTO;
@@ -91,5 +92,10 @@ public class AccountBankServiceImpl implements AccountBankService {
         return accountBankMapper.toDTO(bank);
     }
 
+
+    @Override
+    public Set<AccountBank> findAccountBank(Long userId){
+        return accountRepository.findByUserId(userId);
+    }
 
 }
