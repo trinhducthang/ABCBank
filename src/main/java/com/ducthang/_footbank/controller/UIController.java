@@ -21,4 +21,9 @@ public class UIController {
     public String loanOffers() {
         return "loanOffer";
     }
+
+    @GetMapping("/createLoan")
+    public String createLoan() {
+        return "loanof";
+    }
 }

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ước tính khoản vay</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .loan-calculator {
+            width: 320px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #ff0080;
+        }
+
+        .loan-calculator h2 {
+            font-size: 20px;
+            color: #ff0080;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .input-section {
+            margin-bottom: 15px;
+        }
+
+        .input-section p {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .slider-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            outline: none;
+            border-radius: 5px;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ff0080;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .term-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .term-button {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            color: #333;
+            font-weight: bold;
+            border: none;
+            outline: none;
+        }
+
+        .term-button.active {
+            background-color: #ff0080;
+            color: white;
+        }
+
+        .result-section {
+            background-color: #fce4ec;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .result-row span {
+            font-weight: bold;
+        }
+
+        .total-row {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff0080;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="loan-calculator">
+    <h2>Ước tính khoản vay</h2>
+
+    <div class="input-section">
+        <p>Bạn muốn vay <span id="loanAmountDisplay">30.000.000đ</span></p>
+        <input type="range" min="6000000" max="30000000" value="30000000" class="slider" id="loanAmountSlider">
+    </div>
+
+    <div class="input-section">
+        <p>Thời hạn vay</p>
+        <div class="term-buttons">
+            <button class="term-button" data-term="12">12 tháng</button>
+            <button class="term-button" data-term="15">15 tháng</button>
+            <button class="term-button active" data-term="18">18 tháng</button>
+            <button class="term-button" data-term="21">21 tháng</button>
+        </div>
+    </div>
+
+    <div class="result-section">
+        <div class="result-row">
+            <span>Tiền trả mỗi tháng</span>
+            <span id="monthlyPayment">2.851.000đ</span>
+        </div>
+        <div class="result-row">
+            <span>Ngày bắt đầu trả</span>
+            <span id="startDate">07/12/2024</span>
+        </div>
+        <div class="result-row">
+            <span>Số tiền thực nhận</span>
+            <span id="totalReceive">30.000.000đ</span>
+        </div>
+        <div class="result-row">
+            <span>Tiền gốc</span>
+            <span id="principal">30.000.000đ</span>
+        </div>
+        <div class="result-row">
+            <span>Phí + Lãi</span>
+            <span id="interestFee">21.318.000đ</span>
+        </div>
+        <div class="total-row">
+            Tổng thanh toán tạm tính: <span id="totalPayment">51.318.000đ</span>
+        </div>
+    </div>
+
+    <button class="action-button">VAY NHANH</button>
+</div>
+
+<script>
+    const loanAmountSlider = document.getElementById("loanAmountSlider");
+    const loanAmountDisplay = document.getElementById("loanAmountDisplay");
+    const monthlyPayment = document.getElementById("monthlyPayment");
+    const totalReceive = document.getElementById("totalReceive");
+    const principal = document.getElementById("principal");
+    const interestFee = document.getElementById("interestFee");
+    const totalPayment = document.getElementById("totalPayment");
+
+    const termButtons = document.querySelectorAll(".term-button");
+
+    let selectedTerm = 18;  // Mặc định là 18 tháng
+
+    // Cập nhật giá trị khi kéo thanh slider
+    loanAmountSlider.oninput = function() {
+        const loanAmount = parseInt(this.value);
+        loanAmountDisplay.textContent = loanAmount.toLocaleString() + "đ";
+        updateCalculations(loanAmount, selectedTerm);
+    }
+
+    // Cập nhật khi chọn thời hạn vay
+    termButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            termButtons.forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+            selectedTerm = parseInt(button.getAttribute("data-term"));
+            updateCalculations(parseInt(loanAmountSlider.value), selectedTerm);
+        });
+    });
+
+    function updateCalculations(loanAmount, term) {
+        // Giả sử công thức tính toán đơn giản cho ví dụ
+        const monthlyInterestRate = 0.05; // lãi suất giả định
+        const monthlyRepayment = Math.round((loanAmount * (1 + monthlyInterestRate * term)) / term);
+        const totalInterest = monthlyRepayment * term - loanAmount;
+        const totalPaymentAmount = loanAmount + totalInterest;
+
+        // Cập nhật giá trị trên giao diện
+        monthlyPayment.textContent = monthlyRepayment.toLocaleString() + "đ";
+        totalReceive.textContent = loanAmount.toLocaleString() + "đ";
+        principal.textContent = loanAmount.toLocaleString() + "đ";
+        interestFee.textContent = totalInterest.toLocaleString() + "đ";
+        totalPayment.textContent = totalPaymentAmount.toLocaleString() + "đ";
+    }
+
+    // Khởi tạo giá trị ban đầu
+    updateCalculations(parseInt(loanAmountSlider.value), selectedTerm);
+</script>
+
+</body>
+</html>

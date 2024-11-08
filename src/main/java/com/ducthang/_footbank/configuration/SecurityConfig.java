@@ -52,7 +52,8 @@ public class SecurityConfig {
             "/login",
             "/js/loginJs.js",
             "/dashboard",
-            "/transactions/**"
+            "/transactions/**",
+            "/createLoan"
 
     };
 
