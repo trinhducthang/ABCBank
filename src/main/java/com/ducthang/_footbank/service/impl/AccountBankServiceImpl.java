@@ -10,6 +10,7 @@ import com.ducthang._footbank.repository.TransactionDetailsRepository;
 import com.ducthang._footbank.repository.UserRepository;
 import com.ducthang._footbank.service.itf.AccountBankService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -66,13 +67,18 @@ public class AccountBankServiceImpl implements AccountBankService {
 
     @Override
     public AccountBankDTO transferMoney(String from, String to, BigDecimal amount) {
+
+
         AccountBank bank = accountRepository.findByAccountNumber(from);
-        AccountBank accountBank = accountRepository.findByAccountNumber(to);
-        if(from.equals(to)) {
-            throw new RuntimeException("duplicate from and to");
-        }
         if (bank == null) {
             throw new RuntimeException("user source not found");
+        }
+        AccountBank accountBank = accountRepository.findByAccountNumber(to);
+        String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = bank.getUser().getUsername();
+        if(!authenticationName.equals(username)) throw new RuntimeException("Invalid authentication");
+        if(from.equals(to)) {
+            throw new RuntimeException("duplicate from and to");
         }
         if (accountBank == null) {
             throw new RuntimeException("user destination not found");
