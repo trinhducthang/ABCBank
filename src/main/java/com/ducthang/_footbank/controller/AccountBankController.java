@@ -3,12 +3,14 @@ package com.ducthang._footbank.controller;
 import com.ducthang._footbank.dto.AccountBankDTO;
 import com.ducthang._footbank.dto.TransferDTO;
 import com.ducthang._footbank.dto.response.ApiResponse;
+import com.ducthang._footbank.dto.response.ResponseData;
 import com.ducthang._footbank.entity.AccountBank;
 import com.ducthang._footbank.service.itf.AccountBankService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @RestController
@@ -71,7 +73,22 @@ public class AccountBankController {
 
 
     @GetMapping("/info/{id}")
-    public Set<AccountBank> findAccountBank(@PathVariable long id) {
-        return accountBankService.findAccountBank(id);
+    public ResponseData<?> findAccountBank(@PathVariable long id) {
+        try {
+            return new ResponseData<>(HttpStatus.OK.value(),"get success", LocalDateTime.now(),accountBankService.findAccountBank(id));
+        }
+        catch (RuntimeException e){
+            return new ResponseData<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
+    @GetMapping("/getUser/{accountNumber}")
+    public String findAccountBank(@PathVariable String accountNumber) {
+        try {
+            return accountBankService.getNameUser(accountNumber);
+        }
+        catch (RuntimeException e){
+            return e.getMessage();
+        }
     }
 }

@@ -25,6 +25,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_POST_ENDPOINTS = {
             "/auth/token",
+            "auth/logout",
             "/auth/introspect",
             "api/users/create",
             "/bank/create",
@@ -44,16 +45,24 @@ public class SecurityConfig {
 //            "/bank/**",
             "/bank-summary",
             "/loanOffers",
-            "/loanOffer"
+            "/loanOffer",
+            "bank/getUser/**",
+            "bank/info/**",
+            "api/users/getname/**",
+            "api/users/get-by-username/**"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
-        "/css/loginStyle.css",
+            "/css/loginStyle.css",
             "/login",
             "/js/loginJs.js",
             "/dashboard",
             "/transactions/**",
-            "/createLoan"
+            "/createLoan",
+            "/js/logout.js",
+            "/logout",
+            "/transfer",
+            "/home"
 
     };
 
@@ -72,7 +81,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET,PUBLIC_GET_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_UI_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROLE_ADMIN ).hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROLE_ADMIN ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
 //                .oauth2Login(oauth2 -> oauth2

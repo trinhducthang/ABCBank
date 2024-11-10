@@ -26,4 +26,19 @@ public class UIController {
     public String createLoan() {
         return "loanof";
     }
+
+    @GetMapping("/logout")
+    public String logout() {
+        return "logout";
+    }
+
+    @GetMapping("/transfer")
+    public String transfer() {
+        return "transfer";
+    }
+
+    @GetMapping("/home")
+    public String home() {
+        return "home";
+    }
 }

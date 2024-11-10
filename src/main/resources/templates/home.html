@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - Dashboard</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: #333;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        header img {
+            height: 40px;
+        }
+        header .welcome {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        header .member-points {
+            font-size: 14px;
+            color: #4A90E2;
+        }
+
+        /* Sidebar Menu Styles */
+        #sidebar {
+            width: 220px;
+            background-color: #fff;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 40px;
+            border-right: 1px solid #ddd;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #sidebar ul li {
+            padding: 18px 30px;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #sidebar ul li:hover {
+            background-color: #4A90E2;
+            color: #fff;
+            border-left: 4px solid #fff;
+        }
+        #sidebar ul li::before {
+            content: "►";
+            margin-right: 12px;
+            color: #4A90E2;
+            transition: all 0.3s ease;
+        }
+        #sidebar ul li:hover::before {
+            transform: translateX(6px);
+            color: #fff;
+        }
+
+        /* Content Area Styles */
+        #content {
+            margin-left: 240px;
+            padding: 40px;
+            display: none; /* Start with hiding all content */
+            transition: background-color 0.3s;
+        }
+
+        /* Section Heading */
+        #content h2 {
+            color: #4A90E2;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Account Info Styles */
+        .account-info {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px 20px; /* Giãn dòng giữa các mục */
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .account-info .info-title {
+            font-size: 16px;
+            color: #666;
+            align-self: center; /* Căn giữa dọc */
+            text-align: right; /* Căn phải cho tiêu đề */
+            padding-right: 10px;
+        }
+
+        .account-info .info-value {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+            align-self: center; /* Căn giữa dọc */
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 15px 40px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            color: #333;
+            position: fixed;
+            width: calc(100% - 240px);
+            bottom: 0;
+            left: 240px;
+            box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="logo.png" alt="Logo">
+    <div>
+        <span class="welcome">Chào mừng trở lại <span id="user-name">...</span></span>
+        <div class="member-points">Điểm thành viên: <span style="color: orange;">0 MB</span></div>
+    </div>
+</header>
+
+<div id="sidebar">
+    <ul>
+        <li id="home-menu">Trang chủ</li>
+        <li id="account-info-menu">Thông tin tài khoản</li>
+        <li>Chuyển tiền</li>
+        <li>Tiết kiệm và đầu tư</li>
+        <li>Thanh toán hóa đơn</li>
+        <li>Dịch vụ thẻ</li>
+        <li>Khoản vay</li>
+        <li>Tiện ích</li>
+    </ul>
+</div>
+
+<div id="content">
+    <div id="account-info" class="account-info">
+        <h2>Thông tin tài khoản</h2>
+        <p></p>
+        <div class="info-title">Username:</div>
+        <div class="info-value" id="username-info">...</div>
+        <div class="info-title">Email:</div>
+        <div class="info-value" id="email-info">...</div>
+        <div class="info-title">Số điện thoại:</div>
+        <div class="info-value" id="phone-info">...</div>
+        <div class="info-title">Ngày sinh:</div>
+        <div class="info-value" id="dob-info">...</div>
+        <div class="info-title">Địa chỉ:</div>
+        <div class="info-value" id="address-info">...</div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2024 Trinh Duc Thang. Bảo lưu mọi quyền.
+</footer>
+
+<script>
+    // Hàm lấy thông tin người dùng từ API
+    async function getUserInfo(username) {
+        try {
+            const response = await fetch(`api/users/get-by-username?username=${username}`);
+            const user = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('user_id',user.id)
+                document.getElementById('username-info').textContent = user.username;
+                document.getElementById('email-info').textContent = user.email;
+                document.getElementById('phone-info').textContent = user.phone;
+                document.getElementById('dob-info').textContent = new Date(user.dob).toLocaleDateString();
+                document.getElementById('address-info').textContent = user.address;
+            } else {
+                console.error('Không thể lấy thông tin người dùng');
+            }
+        } catch (error) {
+            console.error('Có lỗi xảy ra khi lấy dữ liệu:', error);
+        }
+    }
+
+    // Hiển thị thông tin tài khoản khi nhấn vào menu
+    document.getElementById('account-info-menu').addEventListener('click', function() {
+        document.getElementById('content').style.display = 'block'; // Hiển thị nội dung thông tin tài khoản
+        const username = localStorage.getItem('username');
+        if (username) {
+            getUserInfo(username);
+        } else {
+            console.error("Không tìm thấy username trong localStorage.");
+        }
+    });
+
+    // Hiển thị trang chủ khi nhấn vào menu Trang chủ
+    document.getElementById('home-menu').addEventListener('click', function() {
+        document.getElementById('content').style.display = 'none'; // Ẩn thông tin tài khoản khi trở lại trang chủ
+    });
+
+    // Gọi API và hiển thị tên người dùng trong header
+    async function getUserFullName() {
+        const userName = localStorage.getItem('username');
+        if (userName) {
+            const response = await fetch(`api/users/getname?userName=${userName}`);
+            const fullName = await response.text();
+            document.getElementById('user-name').textContent = fullName;
+        }
+    }
+
+    window.onload = getUserFullName;
+</script>
+
+</body>
+</html>

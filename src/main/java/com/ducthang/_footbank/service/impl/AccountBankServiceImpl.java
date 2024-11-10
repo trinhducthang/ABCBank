@@ -104,4 +104,11 @@ public class AccountBankServiceImpl implements AccountBankService {
         return accountRepository.findByUserId(userId);
     }
 
+    @Override
+    public String getNameUser(String accountNumber) {
+        AccountBank accountBank = accountRepository.findByAccountNumber(accountNumber);
+        User user = accountBank.getUser();
+        return user.getLastName() + " " + user.getFirstName() ;
+    }
+
 }

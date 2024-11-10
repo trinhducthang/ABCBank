@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Logout</title>
+</head>
+<body>
+<h1>Đang đăng xuất...</h1>
+
+
+<script src="/static/js/logout.js"></script>
+<script>
+
+
+    const logout = () => {
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        if (!jwtToken) {
+            alert('Không có token để đăng xuất.');
+            return;
+        }
+
+        fetch('/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + jwtToken
+            },
+            body: JSON.stringify({ token: jwtToken })
+        })
+            .then(response => {
+                if (response.ok) {
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('username');
+                    alert('Đăng xuất thành công.');
+                    // window.location.href = '/login';
+                } else {
+                    alert('Đăng xuất không thành công.');
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi đăng xuất:', error);
+                alert('Đã xảy ra lỗi khi đăng xuất. Vui lòng thử lại sau.');
+            });
+    };
+
+    logout();
+</script>
+</body>
+</html>

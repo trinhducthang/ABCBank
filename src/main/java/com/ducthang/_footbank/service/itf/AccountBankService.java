@@ -18,7 +18,7 @@ public interface AccountBankService {
     @PostAuthorize("returnObject[0].user.username == authentication.name")
     public AccountBankDTO updateAccountBank(long id, AccountBankDTO accountBank);
 
-    @PostAuthorize("(returnObject[0].user.username == authentication.name) || hasRole('ROLE_ADMIN')")
+//    @PostAuthorize("(returnObject[0].user.username == authentication.name) || hasRole('ROLE_ADMIN')")
     public boolean deleteAccountBank(long id);
 
     //authorize in business
@@ -26,4 +26,6 @@ public interface AccountBankService {
 
     @PostAuthorize("returnObject[0].user.username == authentication.name")
     public Set<AccountBank> findAccountBank(Long userId);
+
+    public String getNameUser(String accountNumber);
 }

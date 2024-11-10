@@ -85,6 +85,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String getFullName(String username) {
+        User user = userRepository.getUserByUsername(username);
+        return user.getLastName() + " " + user.getFirstName();
+    }
+
+    @Override
+    public User getUserByUserName(String username) {
+        return userRepository.getUserByUsername(username);
+    }
+
+    @Override
     public boolean deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits"));
         userRepository.delete(user);

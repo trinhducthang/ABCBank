@@ -9,9 +9,10 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f7f9;
         }
         header {
-            background: #4CAF50;
+            background: #007BFF;
             color: white;
             padding: 10px;
             text-align: center;
@@ -34,6 +35,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            background: #fff;
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -54,14 +56,13 @@
             padding: 5px 10px;
             margin: 0 2px;
             border: none;
-            background-color: #4CAF50;
+            background-color: #007BFF;
             color: white;
             cursor: pointer;
         }
         .pagination button.active {
-            background-color: #3e8e41;
+            background-color: #0056b3;
         }
-        /* CSS cho phần tử loading overlay */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -79,7 +80,7 @@
         }
         .spinner {
             border: 5px solid rgba(0, 0, 0, 0.1);
-            border-top: 5px solid #4CAF50;
+            border-top: 5px solid #007BFF;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -89,8 +90,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #timeSelector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #timeSelector label {
+            font-weight: bold;
+        }
     </style>
-    <!-- Thêm link tới Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -98,7 +107,6 @@
     <h1>Dashboard</h1>
 </header>
 
-<!-- Loading overlay -->
 <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
 </div>
@@ -123,9 +131,33 @@
         <div id="userPagination" class="pagination"></div>
     </section>
 
-    <!-- Thêm section để hiển thị biểu đồ -->
     <section>
         <h2>Biểu đồ số lượng người dùng đăng ký</h2>
+
+        <!-- Form chọn thời gian -->
+        <form id="timeSelector">
+            <label for="yearSelect">Chọn năm:</label>
+            <select id="yearSelect"></select>
+
+            <label for="monthSelect">Chọn tháng:</label>
+            <select id="monthSelect">
+                <option value="1">Tháng 1</option>
+                <option value="2">Tháng 2</option>
+                <option value="3">Tháng 3</option>
+                <option value="4">Tháng 4</option>
+                <option value="5">Tháng 5</option>
+                <option value="6">Tháng 6</option>
+                <option value="7">Tháng 7</option>
+                <option value="8">Tháng 8</option>
+                <option value="9">Tháng 9</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
+            </select>
+
+            <button type="button" onclick="updateChart()">Xem biểu đồ</button>
+        </form>
+
         <canvas id="userRegistrationChart" width="400" height="200"></canvas>
     </section>
 </main>
@@ -135,49 +167,60 @@
 </footer>
 
 <script>
-    let currentPageUsers = 0;
-    const USERS_PER_PAGE = 5;
-
-    // Lấy token từ localStorage
     const jwtToken = localStorage.getItem('jwtToken');
 
-    // Kiểm tra token JWT có tồn tại hay không
     if (!jwtToken) {
         alert('Bạn cần đăng nhập để tiếp tục.');
-        window.location.href = '/login'; // Chuyển hướng đến trang đăng nhập nếu không có token
+        window.location.href = '/login';
     }
 
-    // Hiển thị loading overlay
+    const checkTokenAndRedirect = () => {
+        if (jwtToken) {
+            const introspectRequest = { token: jwtToken };
+            fetch('/auth/introspect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(introspectRequest)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!(data.code === 200 && data.result && data.result.valid === true)) {
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi kiểm tra token:', error);
+                });
+        }
+    };
+    checkTokenAndRedirect();
+
     function showLoading() {
         document.getElementById("loadingOverlay").classList.add("active");
     }
 
-    // Ẩn loading overlay
     function hideLoading() {
         document.getElementById("loadingOverlay").classList.remove("active");
     }
 
-    // Gọi API lấy danh sách người dùng
     async function fetchUsers(page = 0) {
-        showLoading(); // Hiển thị overlay khi bắt đầu gọi API
+        showLoading();
         try {
-            const response = await fetch(`/api/users?page=${page}&size=${USERS_PER_PAGE}`, {
+            const response = await fetch(`/api/users?page=${page}&size=5`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`,
-                }
+                headers: { 'Authorization': `Bearer ${jwtToken}` }
             });
             const data = await response.json();
             renderUsers(data.content);
             renderPagination(data.totalPages, page, 'userPagination', fetchUsers);
         } catch (error) {
             console.error("Network error:", error);
+            alert("Access denied");
         } finally {
-            hideLoading(); // Ẩn overlay khi API đã xử lý xong
+            hideLoading();
         }
     }
 
-    // Render dữ liệu người dùng vào bảng
     function renderUsers(users) {
         const tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = '';
@@ -194,7 +237,6 @@
         });
     }
 
-    // Render các nút phân trang
     function renderPagination(totalPages, currentPage, containerId, callback) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -209,29 +251,23 @@
         }
     }
 
-    // Gọi API lấy dữ liệu số lượng người dùng đăng ký theo ngày trong tháng
     async function fetchUserRegistrationDataByMonth(year, month) {
         try {
             const response = await fetch(`/api/users/user-registration/by-day?year=${year}&month=${month}`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`,
-                }
+                headers: { 'Authorization': `Bearer ${jwtToken}` }
             });
             const data = await response.json();
-            console.log(data);  // Kiểm tra dữ liệu trả về từ API
 
             if (data.result && Array.isArray(data.result)) {
-                const userCounts = data.result; // Dữ liệu số lượng người dùng đăng ký mỗi ngày
+                const userCounts = data.result;
                 const labels = [];
-                const daysInMonth = new Date(year, month, 0).getDate(); // Lấy số ngày trong tháng
+                const daysInMonth = new Date(year, month, 0).getDate();
 
-                // Tạo nhãn cho từng ngày trong tháng
                 for (let day = 1; day <= daysInMonth; day++) {
                     labels.push(`${day}-${month < 10 ? '0' + month : month}-${year}`);
                 }
 
-                // Vẽ biểu đồ với dữ liệu lấy từ API
                 renderUserRegistrationChart(labels, userCounts);
             } else {
                 console.error("Dữ liệu trả về không hợp lệ:", data);
@@ -241,7 +277,6 @@
         }
     }
 
-    // Hàm vẽ biểu đồ Line Chart
     function renderUserRegistrationChart(labels, data) {
         const ctx = document.getElementById('userRegistrationChart').getContext('2d');
         new Chart(ctx, {
@@ -251,29 +286,51 @@
                 datasets: [{
                     label: 'Số lượng người dùng đăng ký',
                     data: data,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    fill: false,
-                    tension: 0.1
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    fill: true
                 }]
             },
             options: {
                 responsive: true,
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Ngày'
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        title: {
+                            display: true,
+                            text: 'Số lượng'
+                        }
                     }
                 }
             }
         });
     }
 
-    // Gọi API khi tải trang
-    window.onload = () => {
-        fetchUsers(currentPageUsers); // Lấy danh sách người dùng
-        const year = 2024; // Năm bạn muốn hiển thị
-        const month = 11;  // Tháng bạn muốn hiển thị (11 cho tháng 11)
-        fetchUserRegistrationDataByMonth(year, month); // Lấy số liệu đăng ký người dùng theo ngày trong tháng
-    };
+    function updateChart() {
+        const year = document.getElementById('yearSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        fetchUserRegistrationDataByMonth(year, month);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchUsers();
+
+        const currentYear = new Date().getFullYear();
+        const yearSelect = document.getElementById('yearSelect');
+        for (let i = currentYear; i >= currentYear - 10; i--) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            yearSelect.appendChild(option);
+        }
+
+        fetchUserRegistrationDataByMonth(currentYear, 11);
+    });
 </script>
 </body>
 </html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuyển Tiền</title>
+    <link rel="icon" type="image/x-icon" href="/imgs/favicon.png"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 40%;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .checkbox input {
+            margin-right: 5px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: inline-block;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Chuyển Tiền</h1>
+    <div class="step-indicator">
+        Thông tin chuyển tiền > Thông tin người nhận
+    </div>
+    <div class="form-title">Thông tin người nhận</div>
+    <div class="subtitle">Vui lòng nhập thông tin người nhận tiền</div>
+    <form id="transactionForm">
+        <div class="form-group">
+            <label for="source">Tài khoản gửi:</label>
+            <select id="source" name="source" required></select>
+        </div>
+        <div class="form-group">
+            <label for="destination">Số tài khoản nhận:</label>
+            <input type="text" id="destination" name="destination" required>
+        </div>
+        <div class="form-group">
+            <label for="receiverName">Tên người nhận:</label>
+            <input type="text" id="receiverName" name="receiverName" readonly>
+        </div>
+        <div class="form-group">
+            <label for="amount">Số tiền:</label>
+            <input type="number" id="amount" name="amount" required>
+        </div>
+        <div class="form-group">
+            <label for="content">Nội dung:</label>
+            <input type="text" id="content" name="content" placeholder="Nội dung chuyển tiền">
+        </div>
+        <button type="submit">Chuyển tiền</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const idString = localStorage.getItem('user_id');
+
+        if (idString) {
+            const id = parseInt(idString, 10);
+            const jwtToken = localStorage.getItem('jwtToken');
+
+            try {
+                const response = await fetch(`/bank/info/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + jwtToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData.status === 200 && responseData.data) {
+                        const senderAccounts = responseData.data;
+                        const sourceSelect = document.getElementById('source');
+                        senderAccounts.forEach(account => {
+                            const option = document.createElement('option');
+                            option.value = account.accountNumber;
+                            option.textContent = `${account.accountNumber} | Số dư: ${account.balance}`;
+                            sourceSelect.appendChild(option);
+                        });
+                    } else {
+                        alert(`Lỗi: ${responseData.message}`);
+                    }
+                } else {
+                    alert('Lỗi: Không thể tải thông tin tài khoản.');
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                alert('Lỗi khi tải tài khoản.');
+            }
+        } else {
+            alert('Không tìm thấy user ID. Vui lòng đăng nhập lại.');
+            window.location.href = '/login';
+        }
+    });
+
+    document.getElementById('transactionForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const transactionDetails = {
+            from: document.getElementById('source').value,
+            to: document.getElementById('destination').value,
+            amount: parseFloat(document.getElementById('amount').value),
+            content: document.getElementById('content').value
+        };
+
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) {
+            alert('Vui lòng đăng nhập trước khi thực hiện giao dịch');
+            return;
+        }
+
+        try {
+            const response = await fetch('bank/transfer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + jwtToken
+                },
+                body: JSON.stringify(transactionDetails)
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.message === 'Transfer success') {
+                alert('Chuyển tiền thành công');
+            } else {
+                handleError(data);
+            }
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            alert('Đã xảy ra lỗi khi chuyển tiền');
+        }
+    });
+
+    document.getElementById('destination').addEventListener('blur', async (event) => {
+        const destinationAccount = event.target.value;
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        try {
+            const response = await fetch(`bank/getUser/${destinationAccount}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + jwtToken,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.text();
+                document.getElementById('receiverName').value = data;
+            } else {
+                document.getElementById('receiverName').value = '';
+                console.error('Error fetching user name');
+            }
+        } catch (error) {
+            document.getElementById('receiverName').value = '';
+            console.error('Fetch Error:', error);
+        }
+    });
+
+    function handleError(data) {
+        if (data.message === 'Bank not found') {
+            alert('Số tài khoản không tồn tại');
+        } else if (data.message === 'Insufficient funds') {
+            alert('Số tiền không đủ để chuyển');
+        } else if (data.code === 400) {
+            alert('Lỗi xác thực. Vui lòng thử lại');
+        } else {
+            alert('Đã xảy ra lỗi khi chuyển tiền');
+        }
+    }
+</script>
+
+</body>
+</html>

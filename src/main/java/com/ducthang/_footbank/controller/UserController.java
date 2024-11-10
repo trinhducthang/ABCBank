@@ -123,6 +123,13 @@ public class UserController {
                 .build();
     }
 
+    @GetMapping("/getname")
+    public String getFullName(@RequestParam String userName) {
+        return userService.getFullName(userName);
+    }
 
-
+    @GetMapping("/get-by-username")
+    public User getByUserName(@RequestParam String username){
+        return userService.getUserByUserName(username);
+    }
 }
