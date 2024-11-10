@@ -120,9 +120,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(UserDTO user) {
-        User user1 = userRepository.findById(user.getId()).orElseThrow(()-> new RuntimeException("user not exits"));
-        user1 = userMapper.toEntity(user);
+    public UserDTO updateUser( Long id,UserDTO user) {
+        User user1 = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits"));
+        user1.setFirstName(user.getFirstName());
+        user1.setLastName(user.getLastName());
+        user1.setEmail(user.getEmail());
+        user1.setPhone(user.getPhone());
+        user1.setDob(user.getDob());
+        user1.setGender(user.getGender());
+        user1.setAddress(user.getAddress());
         user1.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user1);
         return user;

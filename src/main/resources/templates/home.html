@@ -92,32 +92,35 @@
             margin-bottom: 20px;
         }
 
-        /* Account Info Styles */
-        .account-info {
+        /* Nạp tiền qua VNPAY */
+        .vnpay-form {
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 10px 20px; /* Giãn dòng giữa các mục */
-            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 500px;
             margin: 0 auto;
         }
-
-        .account-info .info-title {
+        .vnpay-form input {
+            padding: 10px;
             font-size: 16px;
-            color: #666;
-            align-self: center; /* Căn giữa dọc */
-            text-align: right; /* Căn phải cho tiêu đề */
-            padding-right: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
         }
-
-        .account-info .info-value {
-            font-size: 18px;
-            color: #333;
-            font-weight: 600;
-            align-self: center; /* Căn giữa dọc */
+        .vnpay-form button {
+            padding: 10px 20px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .vnpay-form button:hover {
+            background-color: #357ABD;
         }
 
         /* Footer Styles */
@@ -133,6 +136,127 @@
             left: 240px;
             box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
         }
+        /* Thông tin tài khoản */
+        #account-info {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            display: none; /* Ban đầu ẩn */
+        }
+
+        #account-info h2 {
+            color: #4A90E2;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #account-info p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        #account-info span {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* CSS cho các phần tử trong tài khoản */
+        #account-info p span {
+            color: #4A90E2;
+        }
+
+        #account-info p span:empty {
+            color: #ccc;
+        }
+
+        #account-info p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Hiệu ứng hover cho các phần tử trong thông tin tài khoản */
+        #account-info p:hover {
+            background-color: #f0f8ff;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        #account-info p span {
+            font-size: 16px;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .buttonupdate{
+            padding: 10px 20px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #update-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        #submit-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        #submit-btn:active {
+            background-color: #388e3c;
+        }
+
     </style>
 </head>
 <body>
@@ -149,30 +273,70 @@
     <ul>
         <li id="home-menu">Trang chủ</li>
         <li id="account-info-menu">Thông tin tài khoản</li>
-        <li>Chuyển tiền</li>
-        <li>Tiết kiệm và đầu tư</li>
-        <li>Thanh toán hóa đơn</li>
-        <li>Dịch vụ thẻ</li>
-        <li>Khoản vay</li>
-        <li>Tiện ích</li>
+        <li onclick="transfer()">Chuyển tiền</li>
+        <li onclick="createLoan()">Vay nhanh linh hoạt</li>
+        <li onclick="loanOffer()">Khoản vay</li>
+        <li id="vnpay-menu">Nạp tiền qua VNPAY</li>
     </ul>
 </div>
 
 <div id="content">
-    <div id="account-info" class="account-info">
-        <h2>Thông tin tài khoản</h2>
-        <p></p>
-        <div class="info-title">Username:</div>
-        <div class="info-value" id="username-info">...</div>
-        <div class="info-title">Email:</div>
-        <div class="info-value" id="email-info">...</div>
-        <div class="info-title">Số điện thoại:</div>
-        <div class="info-value" id="phone-info">...</div>
-        <div class="info-title">Ngày sinh:</div>
-        <div class="info-value" id="dob-info">...</div>
-        <div class="info-title">Địa chỉ:</div>
-        <div class="info-value" id="address-info">...</div>
+    <!-- Form for VNPAY Recharge -->
+    <div id="vnpay-form" class="vnpay-form" style="display: none;">
+        <h2>Nạp tiền qua VNPAY</h2>
+        <label for="amount">Số tiền (VND):</label>
+        <input type="number" id="amount" placeholder="Nhập số tiền" required>
+
+        <label for="bankNumber">Số tài khoản ngân hàng:</label>
+        <input type="text" id="bankNumber" placeholder="Nhập số tài khoản ngân hàng" required>
+
+        <button id="rechargeButton">Nạp tiền</button>
     </div>
+
+    <div id="update-form">
+        <div class="form-group">
+            <label for="firstName">Họ:</label>
+            <input type="text" id="firstName" placeholder="Nhập họ">
+        </div>
+        <div class="form-group">
+            <label for="lastName">Tên:</label>
+            <input type="text" id="lastName" placeholder="Nhập tên">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Nhập email">
+        </div>
+        <div class="form-group">
+            <label for="phone">Số điện thoại:</label>
+            <input type="text" id="phone" placeholder="Nhập số điện thoại">
+        </div>
+        <div class="form-group">
+            <label for="dob">Ngày sinh:</label>
+            <input type="date" id="dob">
+        </div>
+        <div class="form-group">
+            <label for="address">Địa chỉ:</label>
+            <input type="text" id="address" placeholder="Nhập địa chỉ">
+        </div>
+        <div class="form-group">
+            <button id="submit-btn">Cập nhật thông tin</button>
+        </div>
+    </div>
+
+    <!-- Section for Account Information -->
+    <div id="account-info" style="display: none;">
+        <h2>Thông tin tài khoản</h2>
+        <p>Username: <span id="username-info"></span></p>
+        <p>Full name: <span id="fullname-info"></span></p>
+        <p>Email: <span id="email-info"></span></p>
+        <p>Số điện thoại: <span id="phone-info"></span></p>
+        <p>Ngày sinh: <span id="dob-info"></span></p>
+        <p>Địa chỉ: <span id="address-info"></span></p>
+        <p></p>
+        <button class="buttonupdate" id="buttonupdate" >Update information</button>
+    </div>
+
+
 </div>
 
 <footer>
@@ -180,6 +344,58 @@
 </footer>
 
 <script>
+
+    function transfer() {
+        window.location.href = "/transfer";
+    }
+
+    function loanOffer(){
+        window.location.href = "/loanOffers";
+    }
+
+    function createLoan(){
+        window.location.href = "/createLoan";
+    }
+    const userName = localStorage.getItem('username');
+
+    async function getUserId(userName) {
+        try {
+            const response = await fetch(`api/users/get-by-username?username=${userName}`);
+            const user = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('user_id', user.id);
+            } else {
+                console.error('Không thể lấy thông tin người dùng');
+            }
+        } catch (error) {
+            console.error('Có lỗi xảy ra khi lấy dữ liệu:', error);
+        }
+        // Gọi API và hiển thị tên người dùng trong header
+
+    }
+
+    window.onload = getUserId(userName);
+
+    async function getUserFullName() {
+        const userName = localStorage.getItem('username');
+        if (userName) {
+            try {
+                const response = await fetch(`api/users/getname?userName=${userName}`);
+                if (response.ok) {
+                    document.getElementById('user-name').textContent = await response.text();
+                } else {
+                    console.error('Không thể lấy tên người dùng');
+                }
+            } catch (error) {
+                console.error('Lỗi khi gọi API:', error);
+            }
+        } else {
+            console.error('Không có username trong localStorage');
+        }
+    }
+
+    window.onload = getUserFullName;
     // Hàm lấy thông tin người dùng từ API
     async function getUserInfo(username) {
         try {
@@ -187,8 +403,9 @@
             const user = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('user_id',user.id)
+                localStorage.setItem('user_id', user.id);
                 document.getElementById('username-info').textContent = user.username;
+                document.getElementById('fullname-info').textContent = user.firstName + " " + user.lastName;
                 document.getElementById('email-info').textContent = user.email;
                 document.getElementById('phone-info').textContent = user.phone;
                 document.getElementById('dob-info').textContent = new Date(user.dob).toLocaleDateString();
@@ -199,35 +416,117 @@
         } catch (error) {
             console.error('Có lỗi xảy ra khi lấy dữ liệu:', error);
         }
+
+
     }
+
+
+
+    // Hàm thực hiện nạp tiền qua VNPAY
+    async function rechargeVNPAY(amount, bankNumber) {
+        try {
+            const response = await fetch(`http://localhost:8888/api/v1/vn-pay?amount=${amount}&bankNumber=${bankNumber}`);
+            const data = await response.json();
+
+            if (response.ok && data.result.code === 'ok') {
+                const paymentUrl = data.result.paymentUrl;
+                // Chuyển hướng người dùng đến trang thanh toán của VNPAY
+                window.location.href = paymentUrl;
+            } else {
+                alert('Không thể thực hiện giao dịch: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Có lỗi xảy ra khi nạp tiền:', error);
+        }
+    }
+
+    // Xử lý sự kiện nhấn nút Nạp tiền qua VNPAY
+    document.getElementById('rechargeButton').addEventListener('click', function() {
+        const amount = document.getElementById('amount').value;
+        const bankNumber = document.getElementById('bankNumber').value;
+        if (amount && bankNumber) {
+            rechargeVNPAY(amount, bankNumber);
+        } else {
+            alert("Vui lòng nhập đầy đủ thông tin.");
+        }
+    });
+
+    // Hiển thị thông tin tài khoản khi nhấn vào menu
+    document.getElementById('vnpay-menu').addEventListener('click', function() {
+        document.getElementById('account-info').style.display = 'none'; // Ẩn thông tin tài khoản
+        document.getElementById('vnpay-form').style.display = 'flex'; // Hiển thị form nạp
+        document.getElementById('update-form').style.display = 'none'// tiền
+        document.getElementById('content').style.display = 'block'; // Đảm bảo nội dung chính hiển thị
+    });
 
     // Hiển thị thông tin tài khoản khi nhấn vào menu
     document.getElementById('account-info-menu').addEventListener('click', function() {
-        document.getElementById('content').style.display = 'block'; // Hiển thị nội dung thông tin tài khoản
-        const username = localStorage.getItem('username');
-        if (username) {
-            getUserInfo(username);
-        } else {
-            console.error("Không tìm thấy username trong localStorage.");
+        document.getElementById('update-form').style.display = 'none';
+        document.getElementById('vnpay-form').style.display = 'none'; // Ẩn form nạp tiền
+        document.getElementById('account-info').style.display = 'block'; // Hiển thị thông tin tài khoản
+        document.getElementById('content').style.display = 'block'; // Đảm bảo nội dung chính hiển thị
+        getUserInfo(userName); // Lấy thông tin người dùng từ API
+    });
+
+    document.getElementById('buttonupdate').addEventListener('click', function() {
+        document.getElementById('update-form').style.display = 'block'
+        document.getElementById('vnpay-form').style.display = 'none'; // Ẩn form nạp tiền
+        document.getElementById('account-info').style.display = 'none'; // Hiển thị thông tin tài khoản
+        document.getElementById('content').style.display = 'block'; /// Lấy thông tin người dùng từ API
+    });
+
+
+    const userId = localStorage.getItem('user_id');
+    const jwtToken = localStorage.getItem('jwtToken'); // Lấy JWT token từ localStorage
+
+    async function updateUserInfo() {
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const dob = document.getElementById('dob').value;
+        const address = document.getElementById('address').value;
+
+        if (!firstName || !lastName || !email || !phone || !dob || !address) {
+            alert("Vui lòng nhập đầy đủ thông tin.");
+            return;
         }
-    });
 
-    // Hiển thị trang chủ khi nhấn vào menu Trang chủ
-    document.getElementById('home-menu').addEventListener('click', function() {
-        document.getElementById('content').style.display = 'none'; // Ẩn thông tin tài khoản khi trở lại trang chủ
-    });
+        const userDTO = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            dob: dob,
+            address: address
+        };
 
-    // Gọi API và hiển thị tên người dùng trong header
-    async function getUserFullName() {
-        const userName = localStorage.getItem('username');
-        if (userName) {
-            const response = await fetch(`api/users/getname?userName=${userName}`);
-            const fullName = await response.text();
-            document.getElementById('user-name').textContent = fullName;
+        try {
+            const response = await fetch(`/api/users/info/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${jwtToken}` // Thêm JWT token vào header
+                },
+                body: JSON.stringify(userDTO)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Cập nhật thông tin thành công!");
+            } else {
+                alert("Cập nhật thông tin thất bại: " + data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật thông tin người dùng:", error);
+            alert("Đã có lỗi xảy ra.");
         }
     }
 
-    window.onload = getUserFullName;
+    document.getElementById('submit-btn').addEventListener('click', updateUserInfo);
+
+
 </script>
 
 </body>

@@ -23,7 +23,7 @@ public interface UserService {
     public List<UserDTO> getUsers();
 
     @PostAuthorize("returnObject.username == authentication.name")
-    public UserDTO updateUser(UserDTO user);
+    public UserDTO updateUser(Long id,UserDTO user);
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Long> getUserRegistrationCountByMonthAndDay(int year, int month);

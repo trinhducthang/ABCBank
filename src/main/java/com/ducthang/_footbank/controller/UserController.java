@@ -72,13 +72,13 @@ public class UserController {
         }
     }
 
-    @PutMapping("/info")
-    public ApiResponse<UserDTO> updateUser(@Valid @RequestParam UserDTO user){
+    @PutMapping("/info/{id}")
+    public ApiResponse<UserDTO> updateUser(@Valid @PathVariable Long id, @RequestBody UserDTO user){
         try{
             return ApiResponse.<UserDTO>builder()
                     .code(HttpStatus.OK.value())
                     .message("Update user success!")
-                    .result(userService.updateUser(user))
+                    .result(userService.updateUser(id,user))
                     .build();
         }
         catch (Exception e) {

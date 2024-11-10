@@ -116,9 +116,30 @@
         a:hover {
             text-decoration: underline;
         }
+
+        /* Nút quay lại home */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+
+<!-- Nút quay lại trang chủ -->
+<button class="back-btn" onclick="window.location.href = '/home'">Quay lại trang chủ</button>
 
 <div class="container">
     <h1>Chuyển Tiền</h1>
