@@ -68,7 +68,9 @@ public class SecurityConfig {
             "/home",
             "/",
             "/signup",
-            "/dangxuat"
+            "/dangxuat",
+            "/payment-failure",
+            "/payment-success"
 
     };
 

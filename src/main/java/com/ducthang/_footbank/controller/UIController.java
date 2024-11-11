@@ -56,4 +56,14 @@ public class UIController {
     public String signup() {
         return "signup";
     }
+
+    @GetMapping("/payment-success")
+    public String paymentSuccess() {
+        return "payment-success";
+    }
+
+    @GetMapping("/payment-failure")
+    public String paymentFailure() {
+        return "payment-failure";
+    }
 }

@@ -1,13 +1,13 @@
 package com.ducthang._footbank.payment;
 
 import com.ducthang._footbank.dto.response.ApiResponse;
-import com.ducthang._footbank.repository.AccountRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -23,20 +23,24 @@ public class PaymentController {
                 .result(paymentService.createVnPayPayment(request))
                 .build();
     }
+
     @GetMapping("/vn-pay-callback")
-    public ApiResponse<PaymentDTO.VNPayResponse> payCallbackHandler(HttpServletRequest request) {
+    public RedirectView payCallbackHandler(HttpServletRequest request) {
         String status = request.getParameter("vnp_ResponseCode");
         if (status.equals("00")) {
-              return ApiResponse.<PaymentDTO.VNPayResponse>builder()
-                      .code(HttpStatus.OK.value())
-                      .message("OK")
-                      .result(paymentService.payCallbackHandler(request))
-                      .build();
+            paymentService.payCallbackHandler(request);
+//              return ApiResponse.<PaymentDTO.VNPayResponse>builder()
+//                      .code(HttpStatus.OK.value())
+//                      .message("OK")
+//                      .result(paymentService.payCallbackHandler(request))
+//                      .build();
+            return new RedirectView("/payment-success");
         } else {
-            return ApiResponse.<PaymentDTO.VNPayResponse>builder()
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .message("Bad Request")
-                    .build();
+//            return ApiResponse.<PaymentDTO.VNPayResponse>builder()
+//                    .code(HttpStatus.BAD_REQUEST.value())
+//                    .message("Bad Request")
+//                    .build();
+            return new RedirectView("/payment-failure");
         }
     }
 }

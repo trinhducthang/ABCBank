@@ -264,6 +264,22 @@
             background-color: #388e3c;
         }
 
+        .back-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: #a8b5d5;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -372,12 +388,13 @@
 
 
 </div>
-
+<button class="back-btn" onclick="window.location.href = '/dangxuat'">Dang xuat</button>
 <footer>
     &copy; 2024 Trinh Duc Thang. Bảo lưu mọi quyền.
 </footer>
 
 <script>
+
 
     const logout = () => {
         const jwtToken = localStorage.getItem('jwtToken');
