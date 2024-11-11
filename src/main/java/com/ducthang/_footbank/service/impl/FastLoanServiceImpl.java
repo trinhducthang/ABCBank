@@ -25,15 +25,18 @@ public class FastLoanServiceImpl implements FastLoanService {
     @Override
     public FastLoan createFastLoan(Long userId,FastLoan fastLoan) {
         User user = userRepository.findById(userId).orElseThrow( () -> new RuntimeException("User not found"));
+        if(user.getFastLoan() != null) throw new RuntimeException("Fast loan already exists");
         fastLoan.setUser(user);
         Set<AccountBank> bank = accountRepository.findByUserId(userId);
         if(bank.isEmpty()){
             throw new RuntimeException("User " + user.getUsername() + " not exits banks");
         }
+
         for(AccountBank accountBank : bank){
             accountBank.setBalance(accountBank.getBalance().add(fastLoan.getLoanAmount()));
+            System.out.println(accountBank.getBalance().add(fastLoan.getLoanAmount()));
             break;
         }
-        return fastLoan;
+        return fastLoanRepository.save(fastLoan);
     }
 }

@@ -48,7 +48,7 @@
         }
 
         .register-button {
-            background-color: #28a745;
+            background-color: #4A90E2;
             color: white;
             border: none;
             border-radius: 5px;
@@ -58,11 +58,28 @@
         }
 
         .register-button:hover {
-            background-color: #218838;
+            background-color: #357ABD;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
+<button class="back-btn" onclick="window.location.href = '/home'">Quay lại trang chủ</button>
 <h1>Loan Offers</h1>
 <div id="loan-offers-container"></div>
 
@@ -81,19 +98,55 @@
                     const offerDiv = document.createElement('div');
                     offerDiv.classList.add('loan-offer');
                     offerDiv.innerHTML = `
-                            <h3>Offer ID: ${offer.offerId}</h3>
-                            <p>Loan Amount: ${offer.loanAmount.toLocaleString()} VND</p>
-                            <p>Interest Rate: ${offer.interestRate}%</p>
-                            <p>Duration: ${offer.duration}</p>
-                            <button class="register-button">Register</button>
-                        `;
+                        <h3>Offer ID: ${offer.offerId}</h3>
+                        <p>Loan Amount: ${offer.loanAmount.toLocaleString()} VND</p>
+                        <p>Interest Rate: ${offer.interestRate}%</p>
+                        <p>Duration: ${offer.duration}</p>
+                        <button class="register-button" data-loan-id="${offer.offerId}">Register</button>
+                    `;
                     container.appendChild(offerDiv);
+                });
+
+                // Add event listeners to all "Register" buttons
+                const buttons = document.querySelectorAll('.register-button');
+                buttons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const loanOfferId = button.getAttribute('data-loan-id');
+                        const userId = localStorage.getItem('user_id'); // Get user_id from localStorage
+
+                        if (!userId) {
+                            alert("User is not logged in!");
+                            return;
+                        }
+
+                        // Send POST request to signupLoan API
+                        fetch(`/signupLoan?userId=${userId}&LoanOfferId=${loanOfferId}`, {
+                            method: 'POST',
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(errorData => {
+                                        // Show alert with error message from the server
+                                        alert(errorData.message || 'An error occurred');
+                                    });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                alert('Loan registration successful!');
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('There was an error with your loan registration.');
+                            });
+                    });
                 });
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
     });
+
 </script>
 </body>
 </html>

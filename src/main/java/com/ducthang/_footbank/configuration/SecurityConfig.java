@@ -33,7 +33,9 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/loanOffer"
+            "/loanOffer",
+            "/fastLoan/**",
+            "/signupLoan",
     };
 
     private final String[] PUBLIC_GET_ENDPOINTS ={
@@ -49,7 +51,8 @@ public class SecurityConfig {
             "bank/getUser/**",
             "bank/info/**",
             "api/users/getname/**",
-            "api/users/get-by-username/**"
+            "api/users/get-by-username/**",
+            "api/user/generate-users/**"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
@@ -62,7 +65,10 @@ public class SecurityConfig {
             "/js/logout.js",
             "/logout",
             "/transfer",
-            "/home"
+            "/home",
+            "/",
+            "/signup",
+            "/dangxuat"
 
     };
 

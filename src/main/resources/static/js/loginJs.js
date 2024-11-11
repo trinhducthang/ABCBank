@@ -35,8 +35,6 @@ const checkTokenAndRedirect = () => {
                 console.error('Lỗi kiểm tra token:', error);
             });
     } else {
-        // Không có token hoặc username, thực hiện hành động khác nếu cần
-        alert('Bạn cần đăng nhập trước khi tiếp tục.');
     }
 };
 

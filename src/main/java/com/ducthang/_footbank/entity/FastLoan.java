@@ -19,8 +19,6 @@ public class FastLoan {
     private BigDecimal payMonthly;
     private BigDecimal interestAndOther;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
-    @JsonBackReference
+    @OneToOne(mappedBy = "fastLoan") // `loan` là trường trong `User` sở hữu mối quan hệ
     private User user;
 }

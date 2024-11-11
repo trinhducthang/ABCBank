@@ -2,6 +2,7 @@ package com.ducthang._footbank.entity;
 
 import com.ducthang._footbank.entity.enum_.Gender;
 import com.ducthang._footbank.entity.enum_.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -44,8 +45,13 @@ public class User {
     @Lob
     private String address;
 
-    @OneToOne(mappedBy = "user")
-    private Loan loans;
+//    @OneToOne(mappedBy = "user")
+//    private Loan loans;
+
+    @ManyToOne
+    @JoinColumn(name = "loan_id")
+    @JsonBackReference  // Ngừng serialize "loan" để tránh vòng lặp
+    private Loan loan;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -60,8 +66,8 @@ public class User {
     private Set<AccountBank> accountBanks;
 
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.DETACH)
-    @JsonManagedReference
+    @OneToOne
+    @JoinColumn(name = "fastLoan_id") // Cột khóa ngoại trong bảng User, liên kết với Loan
     private FastLoan fastLoan;
 
 }

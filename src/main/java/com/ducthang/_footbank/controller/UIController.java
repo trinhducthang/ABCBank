@@ -32,6 +32,11 @@ public class UIController {
         return "logout";
     }
 
+    @GetMapping("/dangxuat")
+    public String dangxuat(){
+        return "logout";
+    }
+
     @GetMapping("/transfer")
     public String transfer() {
         return "transfer";
@@ -40,5 +45,15 @@ public class UIController {
     @GetMapping("/home")
     public String home() {
         return "home";
+    }
+
+    @GetMapping("/")
+    public String index(){
+        return "login";
+    }
+
+    @GetMapping("/signup")
+    public String signup() {
+        return "signup";
     }
 }

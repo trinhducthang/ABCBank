@@ -104,6 +104,13 @@
             max-width: 500px;
             margin: 0 auto;
         }
+        .vnpay-form select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
         .vnpay-form input {
             padding: 10px;
             font-size: 16px;
@@ -273,6 +280,7 @@
     <ul>
         <li id="home-menu">Trang chủ</li>
         <li id="account-info-menu">Thông tin tài khoản</li>
+        <li id="create-bank-account-menu">Tạo tài khoản ngân hàng</li>
         <li onclick="transfer()">Chuyển tiền</li>
         <li onclick="createLoan()">Vay nhanh linh hoạt</li>
         <li onclick="loanOffer()">Khoản vay</li>
@@ -287,11 +295,21 @@
         <label for="amount">Số tiền (VND):</label>
         <input type="number" id="amount" placeholder="Nhập số tiền" required>
 
-        <label for="bankNumber">Số tài khoản ngân hàng:</label>
-        <input type="text" id="bankNumber" placeholder="Nhập số tài khoản ngân hàng" required>
+<!--        <label for="bankNumber">Số tài khoản ngân hàng:</label>-->
+<!--        <input type="text" id="bankNumber" placeholder="Nhập số tài khoản ngân hàng" required>-->
+
+
+            <label for="bankNumber">Tài khoản cần nạp tiền:</label>
+            <select id="bankNumber" name="source" required></select>
+
+
+
 
         <button id="rechargeButton">Nạp tiền</button>
     </div>
+
+
+
 
     <div id="update-form">
         <div class="form-group">
@@ -336,6 +354,22 @@
         <button class="buttonupdate" id="buttonupdate" >Update information</button>
     </div>
 
+    <div id="create-bank-account-form" class="vnpay-form"  style="display: none;">
+        <h2>Đăng ký tài khoản ngân hàng</h2>
+        <label for="bank-name">Tên ngân hàng:</label>
+        <select id="bank-name" name="accountName">
+            <option value="MBB">MBB</option>
+            <option value="VCB">VCB</option>
+            <option value="VPB">VPB</option>
+            <option value="BID">BID</option>
+        </select>
+
+        <label for="account-number">Số tài khoản:</label>
+        <input type="text" id="account-number" placeholder="Nhập số tài khoản" required>
+
+        <button id="create-bank-account-button">Tạo tài khoản ngân hàng</button>
+    </div>
+
 
 </div>
 
@@ -344,6 +378,60 @@
 </footer>
 
 <script>
+
+    const logout = () => {
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        if (!jwtToken) {
+            window.location.href = '/login'; // Chuyển hướng về trang đăng nhập nếu không có token
+            return;
+        }
+    };
+
+    logout();
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const idString = localStorage.getItem('user_id');
+
+        if (idString) {
+            const id = parseInt(idString, 10);
+            const jwtToken = localStorage.getItem('jwtToken');
+
+            try {
+                const response = await fetch(`/bank/info/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + jwtToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData.status === 200 && responseData.data) {
+                        const senderAccounts = responseData.data;
+                        const sourceSelect = document.getElementById('bankNumber');
+                        senderAccounts.forEach(account => {
+                            const option = document.createElement('option');
+                            option.value = account.accountNumber;
+                            option.textContent = `${account.accountNumber} | Số dư: ${account.balance}`;
+                            sourceSelect.appendChild(option);
+                        });
+                    } else {
+                        alert(`Lỗi: ${responseData.message}`);
+                    }
+                } else {
+                    alert('Lỗi: Không thể tải thông tin tài khoản.');
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                alert('Lỗi khi tải tài khoản.');
+            }
+        } else {
+            alert('Không tìm thấy user ID. Vui lòng đăng nhập lại.');
+            window.location.href = '/login';
+        }
+    });
 
     function transfer() {
         window.location.href = "/transfer";
@@ -455,14 +543,16 @@
     document.getElementById('vnpay-menu').addEventListener('click', function() {
         document.getElementById('account-info').style.display = 'none'; // Ẩn thông tin tài khoản
         document.getElementById('vnpay-form').style.display = 'flex'; // Hiển thị form nạp
-        document.getElementById('update-form').style.display = 'none'// tiền
+        document.getElementById('update-form').style.display = 'none'//
+        document.getElementById('create-bank-account-form').style.display = 'none'// tiền
         document.getElementById('content').style.display = 'block'; // Đảm bảo nội dung chính hiển thị
     });
 
     // Hiển thị thông tin tài khoản khi nhấn vào menu
     document.getElementById('account-info-menu').addEventListener('click', function() {
         document.getElementById('update-form').style.display = 'none';
-        document.getElementById('vnpay-form').style.display = 'none'; // Ẩn form nạp tiền
+        document.getElementById('vnpay-form').style.display = 'none';
+        document.getElementById('create-bank-account-form').style.display = 'none'// Ẩn form nạp tiền
         document.getElementById('account-info').style.display = 'block'; // Hiển thị thông tin tài khoản
         document.getElementById('content').style.display = 'block'; // Đảm bảo nội dung chính hiển thị
         getUserInfo(userName); // Lấy thông tin người dùng từ API
@@ -471,9 +561,12 @@
     document.getElementById('buttonupdate').addEventListener('click', function() {
         document.getElementById('update-form').style.display = 'block'
         document.getElementById('vnpay-form').style.display = 'none'; // Ẩn form nạp tiền
-        document.getElementById('account-info').style.display = 'none'; // Hiển thị thông tin tài khoản
+        document.getElementById('account-info').style.display = 'none';
+        document.getElementById('create-bank-account-form').style.display = 'none'// Hiển thị thông tin tài khoản
         document.getElementById('content').style.display = 'block'; /// Lấy thông tin người dùng từ API
     });
+
+
 
 
     const userId = localStorage.getItem('user_id');
@@ -526,6 +619,50 @@
 
     document.getElementById('submit-btn').addEventListener('click', updateUserInfo);
 
+
+    document.getElementById('create-bank-account-button').addEventListener('click', function() {
+        const accountName = document.getElementById('bank-name').value;
+        const accountNumber = document.getElementById('account-number').value;
+
+        if (accountName && accountNumber) {
+            // Call the API to register the bank account
+            registerBankAccount(accountName, accountNumber);
+        } else {
+            alert("Vui lòng nhập đầy đủ thông tin.");
+        }
+    });
+
+    function registerBankAccount(accountName, accountNumber) {
+        // Example function to register the bank account
+        // Replace with actual API endpoint
+        const userId = localStorage.getItem('user_id');
+        fetch(`/bank/create?id=${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+            },
+            body: JSON.stringify({ userId, accountName, accountNumber })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    alert("Tạo tài khoản ngân hàng thành công!");
+                } else {
+                    alert("Lỗi: " + data.message);
+                }
+            })
+            .catch(error => console.error('Lỗi khi tạo tài khoản ngân hàng:', error));
+    }
+
+    // Show the form when the corresponding menu item is clicked
+    document.getElementById('create-bank-account-menu').addEventListener('click', function() {
+        document.getElementById('vnpay-form').style.display = 'none';
+        document.getElementById('account-info').style.display = 'none';
+        document.getElementById('update-form').style.display = 'none';
+        document.getElementById('create-bank-account-form').style.display = 'flex';
+        document.getElementById('content').style.display = 'block';
+    });
 
 </script>
 
