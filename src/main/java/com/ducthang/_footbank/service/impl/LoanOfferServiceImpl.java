@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,5 +23,24 @@ public class LoanOfferServiceImpl implements LoanOfferService {
     @Override
     public List<LoanOffer> getLoanOffer() {
         return loanOfferRepository.findAll();
+    }
+
+    @Override
+    public Optional<LoanOffer> getLoanOfferById(Long offerId) {
+        return loanOfferRepository.findById(offerId);
+    }
+
+    @Override
+    public LoanOffer updateLoanOffer(Long offerId, LoanOffer loanOffer) {
+        if (loanOfferRepository.existsById(offerId)) {
+            loanOffer.setOfferId(offerId);
+            return loanOfferRepository.save(loanOffer);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteLoanOffer(Long offerId) {
+        loanOfferRepository.deleteById(offerId);
     }
 }

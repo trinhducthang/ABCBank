@@ -66,4 +66,9 @@ public class UIController {
     public String paymentFailure() {
         return "payment-failure";
     }
+
+    @GetMapping("/dashboard/loan-offers")
+    public String dashboardLoanOffers() {
+        return "loanofferadmin";
+    }
 }
