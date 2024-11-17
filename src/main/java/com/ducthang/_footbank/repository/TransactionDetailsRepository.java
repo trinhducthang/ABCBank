@@ -23,6 +23,14 @@ public interface TransactionDetailsRepository extends JpaRepository<TransactionD
             "GROUP BY t.bankNumber")
     List<BankTransactionSummary> getTransactionSummaryByBankNumber();
 
+    @Query("SELECT t.transactionDate, COALESCE(SUM(t.amount), 0) " +
+            "FROM TransactionDetails t " +
+            "WHERE t.transactionDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY t.transactionDate " +
+            "ORDER BY t.transactionDate")
+    List<Object[]> getMonthlyTransactionSummary(@Param("startDate") LocalDate startDate,
+                                                @Param("endDate") LocalDate endDate);
+
 
     interface BankTransactionSummary {
         String getBankNumber();

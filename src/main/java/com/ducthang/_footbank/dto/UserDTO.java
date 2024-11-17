@@ -4,6 +4,7 @@ import com.ducthang._footbank.entity.enum_.Gender;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.util.Date;
 
@@ -31,6 +32,7 @@ public class UserDTO {
     private String email;
 
     @Size(max = 15, message = "Phone number cannot exceed 15 characters")
+    @NumberFormat
     private String phone;
 
     @Past(message = "Date of birth must be in the past")

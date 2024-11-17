@@ -5,6 +5,8 @@ import com.ducthang._footbank.service.itf.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class LoanController {
@@ -14,5 +16,10 @@ public class LoanController {
     @PostMapping("/signupLoan")
     public Loan signupLoan(@RequestParam Long userId, @RequestParam Long LoanOfferId) {
         return loanService.createLoan(userId, LoanOfferId);
+    }
+
+    @GetMapping("/api/loan/getAll")
+    public List<Loan> getAllLoan() {
+        return loanService.getLoans();
     }
 }

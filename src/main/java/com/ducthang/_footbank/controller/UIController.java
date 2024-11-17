@@ -71,4 +71,17 @@ public class UIController {
     public String dashboardLoanOffers() {
         return "loanofferadmin";
     }
+
+
+    @GetMapping("/dashboard/transaction-details")
+    public String dashboardTransactionDetails() {
+        return "transactiondetalis";
+    }
+
+    @GetMapping("/dashboard/transaction-details/monthly-summary")
+    public String abcdxyz() {
+        return "transactions-details-chart";
+    }
+
+
 }

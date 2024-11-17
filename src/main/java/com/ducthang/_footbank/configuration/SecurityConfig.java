@@ -52,7 +52,9 @@ public class SecurityConfig {
             "bank/info/**",
             "api/users/getname/**",
             "api/users/get-by-username/**",
-            "api/user/generate-users/**"
+            "api/users/generate-users/**",
+            "/api/loan/getAll",
+            "/monthly-summary/**"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
@@ -73,7 +75,8 @@ public class SecurityConfig {
             "/payment-success",
             "/dashboard/loan-offers",
             "/loanOffer/**",
-
+            "/dashboard/transaction-details",
+            "/dashboard/transaction-details/monthly-summary",
     };
 
 

@@ -4,14 +4,12 @@ import com.ducthang._footbank.dto.AccountBankDTO;
 import com.ducthang._footbank.dto.TransferDTO;
 import com.ducthang._footbank.dto.response.ApiResponse;
 import com.ducthang._footbank.dto.response.ResponseData;
-import com.ducthang._footbank.entity.AccountBank;
 import com.ducthang._footbank.service.itf.AccountBankService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/bank")
@@ -60,7 +58,7 @@ public class AccountBankController {
             return ApiResponse.<AccountBankDTO>builder()
                     .code(HttpStatus.OK.value())
                     .message("Transfer success")
-                    .result(accountBankService.transferMoney(transferDTO.from,transferDTO.to,transferDTO.amount))
+                    .result(accountBankService.transferMoney(transferDTO.from,transferDTO.to,transferDTO.description,transferDTO.amount))
                     .build();
         }
         catch (Exception e) {

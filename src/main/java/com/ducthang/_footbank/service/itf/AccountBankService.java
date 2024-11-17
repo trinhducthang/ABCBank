@@ -22,7 +22,7 @@ public interface AccountBankService {
     public boolean deleteAccountBank(long id);
 
     //authorize in business
-    public AccountBankDTO transferMoney(String from, String to, BigDecimal amount);
+    public AccountBankDTO transferMoney(String from, String to, String description, BigDecimal amount);
 
     @PostAuthorize("returnObject[0].user.username == authentication.name")
     public Set<AccountBank> findAccountBank(Long userId);

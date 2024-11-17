@@ -60,13 +60,14 @@ public class AccountBankServiceImpl implements AccountBankService {
 
     @Override
     public boolean deleteAccountBank(long id) {
+
         AccountBank accountBank = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
         accountRepository.delete(accountBank);
         return true;
     }
 
     @Override
-    public AccountBankDTO transferMoney(String from, String to, BigDecimal amount) {
+    public AccountBankDTO transferMoney(String from, String to,String description, BigDecimal amount) {
 
 
         AccountBank bank = accountRepository.findByAccountNumber(from);
@@ -93,6 +94,12 @@ public class AccountBankServiceImpl implements AccountBankService {
         TransactionDetails transactionDetails = new TransactionDetails();
         transactionDetails.setBankNumber(from);
         transactionDetails.setAmount(amount);
+        if(description.isEmpty()){
+            transactionDetails.setDescription(bank.getUser().getFirstName() +  " " + bank.getUser().getLastName() + " chuyen tien.");
+        }
+        else{
+            transactionDetails.setDescription(description);
+        }
         transactionDetails.setTransactionDate(LocalDate.now());
         transactionDetailsRepository.save(transactionDetails);
         return accountBankMapper.toDTO(bank);
@@ -107,6 +114,7 @@ public class AccountBankServiceImpl implements AccountBankService {
     @Override
     public String getNameUser(String accountNumber) {
         AccountBank accountBank = accountRepository.findByAccountNumber(accountNumber);
+        if(accountBank == null) throw new RuntimeException("User not found please re-enter!");
         User user = accountBank.getUser();
         return user.getLastName() + " " + user.getFirstName() ;
     }

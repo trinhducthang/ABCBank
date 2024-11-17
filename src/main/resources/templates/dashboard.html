@@ -105,6 +105,17 @@
 <body>
 <header>
     <h1>Dashboard</h1>
+    <nav style="list-style: none;">
+        <li>
+            <a style="text-decoration: none; color: white" href="/dashboard/loan-offers">Loan Manage</a>
+        </li>
+        <li>
+            <a style="text-decoration: none; color: white" href="#">Account Bank Manage</a>
+        </li>
+        <li>
+            <a style="text-decoration: none; color: white" href="/dashboard/transaction-details">Transaction details</a>
+        </li>
+    </nav>
 </header>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -195,6 +206,8 @@
     };
     checkTokenAndRedirect();
 
+    let userRegistrationChart = null;  // Biến toàn cục lưu đối tượng biểu đồ
+
     function showLoading() {
         document.getElementById("loadingOverlay").classList.add("active");
     }
@@ -227,13 +240,13 @@
         users.forEach(user => {
             const row = tableBody.insertRow();
             row.innerHTML = `
-                <td>${user.id}</td>
-                <td>${user.username}</td>
-                <td>${user.firstName || ''} ${user.lastName || ''}</td>
-                <td>${user.email || ''}</td>
-                <td>${user.phone || ''}</td>
-                <td>${user.status || 'Đang hoạt động'}</td>
-            `;
+            <td>${user.id}</td>
+            <td>${user.username}</td>
+            <td>${user.firstName || ''} ${user.lastName || ''}</td>
+            <td>${user.email || ''}</td>
+            <td>${user.phone || ''}</td>
+            <td>${user.status || 'Đang hoạt động'}</td>
+        `;
         });
     }
 
@@ -264,6 +277,7 @@
                 const labels = [];
                 const daysInMonth = new Date(year, month, 0).getDate();
 
+                // Tạo danh sách ngày trong tháng
                 for (let day = 1; day <= daysInMonth; day++) {
                     labels.push(`${day}-${month < 10 ? '0' + month : month}-${year}`);
                 }
@@ -279,7 +293,14 @@
 
     function renderUserRegistrationChart(labels, data) {
         const ctx = document.getElementById('userRegistrationChart').getContext('2d');
-        new Chart(ctx, {
+
+        // Nếu biểu đồ đã tồn tại, hủy nó đi trước khi tạo mới
+        if (userRegistrationChart) {
+            userRegistrationChart.destroy();
+        }
+
+        // Tạo mới biểu đồ với dữ liệu và nhãn mới
+        userRegistrationChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -322,6 +343,8 @@
 
         const currentYear = new Date().getFullYear();
         const yearSelect = document.getElementById('yearSelect');
+
+        // Tạo các option cho chọn năm
         for (let i = currentYear; i >= currentYear - 10; i--) {
             const option = document.createElement('option');
             option.value = i;
@@ -329,8 +352,10 @@
             yearSelect.appendChild(option);
         }
 
+        // Lấy dữ liệu và vẽ biểu đồ cho tháng 11 của năm hiện tại
         fetchUserRegistrationDataByMonth(currentYear, 11);
     });
+
 </script>
 </body>
 </html>

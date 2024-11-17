@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +29,18 @@ public class TransactionDetailsServiceImpl implements TransactionDetailsService 
 
     public List<TransactionDetailsRepository.BankTransactionSummary> getTransactionSummaryByBankNumber() {
         return transactionDetailsRepository.getTransactionSummaryByBankNumber();
+    }
+
+    @Override
+    public List<Map<String, Object>> getTransactionStatsByDate(LocalDate startDate, LocalDate endDate) {
+        return List.of();
+    }
+
+    @Override
+    public List<Object[]> getMonthlyTransactionSummary(int year, int month) {
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+        return transactionDetailsRepository.getMonthlyTransactionSummary(startDate, endDate);
     }
 }

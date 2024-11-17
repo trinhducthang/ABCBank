@@ -8,6 +8,7 @@ import com.ducthang._footbank.mapper.UserMapper;
 import com.ducthang._footbank.repository.UserRepository;
 import com.ducthang._footbank.service.itf.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -98,6 +99,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits"));
+        String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = user.getUsername();
+        if(!authenticationName.equals(username)) throw new RuntimeException("Invalid authentication");
         userRepository.delete(user);
         return true;
     }

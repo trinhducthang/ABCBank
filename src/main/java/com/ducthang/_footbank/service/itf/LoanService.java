@@ -11,4 +11,6 @@ public interface LoanService {
     public List<Loan> getLoans();
     public Loan createLoan(Long userId, Long loanOfferId);
     public LoanDetail fastLoan(Long userId);
+
+    boolean pay(Long userId, Long loanId);
 }

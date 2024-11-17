@@ -78,8 +78,6 @@ public class LoanServiceImpl implements LoanService {
 
 
 
-
-
     @Override
     public LoanDetail fastLoan(Long userId) {
         Set<AccountBank> accountBanks = accountRepository.findByUserId(userId);
@@ -88,6 +86,16 @@ public class LoanServiceImpl implements LoanService {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean pay(Long userId, Long loanId) {
+//        Set<AccountBank> accountBanks = accountRepository.findByUserId(userId);
+//        LoanOffer = loanRepository.
+//        for (AccountBank accountBank : accountBanks) {
+//            if(accountBank.getBalance() < )
+//        }
+        return false;
     }
 
     private boolean checkExits(Long userId){
