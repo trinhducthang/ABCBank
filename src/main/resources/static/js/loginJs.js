@@ -29,6 +29,7 @@ const checkTokenAndRedirect = () => {
                 } else {
                     // Token không hợp lệ, thực hiện hành động khác nếu cần
                     alert('Token không hợp lệ, vui lòng đăng nhập lại.');
+                    localStorage.removeItem('jwtToken')
                 }
             })
             .catch(error => {

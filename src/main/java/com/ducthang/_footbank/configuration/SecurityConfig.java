@@ -77,6 +77,7 @@ public class SecurityConfig {
             "/loanOffer/**",
             "/dashboard/transaction-details",
             "/dashboard/transaction-details/monthly-summary",
+            "dashboard/account-bank"
     };
 
 

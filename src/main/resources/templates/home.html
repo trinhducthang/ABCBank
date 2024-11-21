@@ -281,6 +281,7 @@
             background-color: #0056b3;
         }
     </style>
+
 </head>
 <body>
 
@@ -681,6 +682,46 @@
         document.getElementById('content').style.display = 'block';
     });
 
+    const checkTokenAndRedirect = () => {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const username = localStorage.getItem('username');
+
+        if (jwtToken && username) {
+            // Tạo đối tượng yêu cầu xác thực
+            const introspectRequest = {
+                token: jwtToken
+            };
+
+            // Gửi yêu cầu API để kiểm tra token
+            fetch('/auth/introspect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(introspectRequest)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200 && data.result && data.result.valid === true) {
+                        // Kiểm tra nếu username là "admin", chuyển đến /dashboard, nếu không chuyển đến /home
+                        if (username === 'admin') {
+                            window.location.href = '/dashboard';
+                        } else {
+                            window.location.href = '/home';
+                        }
+                    } else {
+                        // Token không hợp lệ, thực hiện hành động khác nếu cần
+                        alert('Token không hợp lệ, vui lòng đăng nhập lại.');
+                        localStorage.removeItem('jwtToken')
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi kiểm tra token:', error);
+                });
+        } else {
+        }
+    };
+    checkTokenAndRedirect();
 </script>
 
 </body>

@@ -84,4 +84,8 @@ public class UIController {
     }
 
 
+    @GetMapping("dashboard/account-bank")
+    public String accountBank() {
+        return "accountbank";
+    }
 }
