@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +98,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User updatePassword(String username, String password) {
+        User user = userRepository.getUserByUsername(username);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(password));
+        return userRepository.save(user);
+    }
+
+    @Override
     public boolean deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits"));
         String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -159,6 +168,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(user.getUsername()).isPresent();
     }
 
-
+    @Override
+    public String getEmailByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isEmpty()){
+            throw new RuntimeException("User not found");
+        }
+        User userObj = user.get();
+        return userObj.getEmail();
+    }
 
 }

@@ -33,4 +33,8 @@ public interface UserService {
     public String getFullName(String username);
 
     public User getUserByUserName(String username);
+
+    public User updatePassword(String username, String password);
+
+    public String getEmailByUsername(String username);
 }

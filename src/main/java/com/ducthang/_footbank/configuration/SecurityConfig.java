@@ -54,7 +54,8 @@ public class SecurityConfig {
             "api/users/get-by-username/**",
             "api/users/generate-users/**",
             "/api/loan/getAll",
-            "/monthly-summary/**"
+            "/monthly-summary/**",
+            "/api/users/forgotPassword/**"
     };
 
     private final String[] PUBLIC_UI_ENDPOINTS ={
@@ -77,7 +78,8 @@ public class SecurityConfig {
             "/loanOffer/**",
             "/dashboard/transaction-details",
             "/dashboard/transaction-details/monthly-summary",
-            "dashboard/account-bank"
+            "dashboard/account-bank",
+            "/forgot-password"
     };
 
 
@@ -97,7 +99,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, PUBLIC_UI_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROLE_ADMIN ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/loanOffer/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT,"/loanOffer/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/loanOffer/**","api/users//updatePassword/**").permitAll()
                         .anyRequest().authenticated()
                 )
 //                .oauth2Login(oauth2 -> oauth2

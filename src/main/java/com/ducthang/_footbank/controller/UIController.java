@@ -88,4 +88,9 @@ public class UIController {
     public String accountBank() {
         return "accountbank";
     }
+
+    @GetMapping("/forgot-password")
+    public String forgotPassword(){
+        return "forgotPassword";
+    }
 }

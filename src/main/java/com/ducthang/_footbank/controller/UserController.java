@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -131,5 +132,27 @@ public class UserController {
     @GetMapping("/get-by-username")
     public User getByUserName(@RequestParam String username){
         return userService.getUserByUserName(username);
+    }
+
+
+    @PutMapping("/updatePassword/{username}")
+    public ResponseEntity<String> updatePassword(@PathVariable String username, @RequestParam String password) {
+        try{
+            userService.updatePassword(username, password);
+            return ResponseEntity.ok("Password updated successfully");
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/forgotPassword/{username}")
+    public String forgotPassword(@PathVariable String username) {
+        try{
+            return userService.getEmailByUsername(username);
+        }
+        catch (Exception e) {
+            return e.getMessage();
+        }
     }
 }
