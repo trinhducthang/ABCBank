@@ -95,34 +95,34 @@
 </head>
 <body>
 <div class="container">
-    <h1>Loan Offer Management</h1>
+    <h1>Quản lý khoản vay</h1>
 
     <!-- Form to create or update a loan offer -->
     <div id="loanForm" class="form-container">
-        <h2>Create / Update Loan Offer</h2>
+        <h2>Tạo / Cập nhật khoản vay</h2>
         <form id="loanOfferForm">
-            <label for="loanAmount">Loan Amount:</label>
+            <label for="loanAmount">Số tiền vay :</label>
             <input type="number" id="loanAmount" name="loanAmount" required>
 
-            <label for="interestRate">Interest Rate (%):</label>
+            <label for="interestRate">Lãi suất (%):</label>
             <input type="number" id="interestRate" name="interestRate" required>
 
-            <label for="duration">Duration (Months):</label>
+            <label for="duration">Kì hạn(Tháng):</label>
             <input type="text" id="duration" name="duration" required>
 
-            <button type="submit">Save Loan Offer</button>
+            <button type="submit">Lưu Khoản Vay</button>
         </form>
     </div>
 
     <!-- Loan Offers Table -->
-    <h2>All Loan Offers</h2>
+    <h2>Danh sách khoản vay</h2>
     <table id="loanOffersTable">
         <thead>
         <tr>
-            <th>Loan Amount</th>
-            <th>Interest Rate</th>
-            <th>Duration</th>
-            <th>Actions</th>
+            <th>Số tiền vay</th>
+            <th>Lãi suất</th>
+            <th>Kì hạn(Tháng)</th>
+            <th>Sửa/Xóa</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -165,8 +165,8 @@
                     <td>${loanOffer.interestRate}</td>
                     <td>${loanOffer.duration}</td>
                     <td>
-                        <button onclick="editLoanOffer(${loanOffer.offerId})">Edit</button>
-                        <button onclick="deleteLoanOffer(${loanOffer.offerId})">Delete</button>
+                        <button onclick="editLoanOffer(${loanOffer.offerId})">Sửa</button>
+                        <button onclick="deleteLoanOffer(${loanOffer.offerId})">Xóa</button>
                     </td>
                 `;
         });

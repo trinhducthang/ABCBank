@@ -99,7 +99,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, PUBLIC_UI_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROLE_ADMIN ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/loanOffer/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT,"/loanOffer/**","api/users//updatePassword/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/loanOffer/**","api/users/updatePassword/**").permitAll()
                         .anyRequest().authenticated()
                 )
 //                .oauth2Login(oauth2 -> oauth2
