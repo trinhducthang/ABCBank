@@ -93,4 +93,9 @@ public class UIController {
     public String forgotPassword(){
         return "forgotPassword";
     }
+
+    @GetMapping("/new_dashboard")
+    public String newDashboard() {
+        return "dashboard_new";
+    }
 }

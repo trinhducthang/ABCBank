@@ -79,7 +79,8 @@ public class SecurityConfig {
             "/dashboard/transaction-details",
             "/dashboard/transaction-details/monthly-summary",
             "dashboard/account-bank",
-            "/forgot-password"
+            "/forgot-password",
+            "/new_dashboard",
     };
 
 

@@ -219,6 +219,22 @@
         document.getElementById("loadingOverlay").classList.remove("active");
     }
 
+    // Lấy dữ liệu người dùng từ localStorage nếu có
+    function loadUsersFromLocalStorage() {
+        const storedUsers = localStorage.getItem('userTableData');
+        if (storedUsers) {
+            renderUsers(JSON.parse(storedUsers));
+            const storedPage = localStorage.getItem('currentPage');
+            if (storedPage) {
+                const currentPage = parseInt(storedPage, 10);
+                renderPaginationFromLocalStorage(currentPage);
+            }
+        } else {
+            fetchUsers(0);  // Nếu không có dữ liệu bảng trong localStorage, fetch dữ liệu
+        }
+    }
+
+    // Fetch dữ liệu người dùng từ API
     async function fetchUsers(page = 0) {
         showLoading();
         try {
@@ -229,6 +245,10 @@
             const data = await response.json();
             renderUsers(data.content);
             renderPagination(data.totalPages, page, 'userPagination', fetchUsers);
+
+            // Lưu lại dữ liệu bảng và trang vào localStorage
+            localStorage.setItem('userTableData', JSON.stringify(data.content));
+            localStorage.setItem('currentPage', page);
         } catch (error) {
             console.error("Network error:", error);
             alert("Access denied");
@@ -237,6 +257,7 @@
         }
     }
 
+    // Render bảng người dùng
     function renderUsers(users) {
         const tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = '';
@@ -253,6 +274,15 @@
         });
     }
 
+    // Render phân trang từ dữ liệu trong localStorage
+    function renderPaginationFromLocalStorage(currentPage) {
+        const storedTotalPages = localStorage.getItem('totalPages');
+        if (storedTotalPages) {
+            renderPagination(parseInt(storedTotalPages, 10), currentPage, 'userPagination', fetchUsers);
+        }
+    }
+
+    // Render phân trang
     function renderPagination(totalPages, currentPage, containerId, callback) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -265,8 +295,12 @@
             }
             container.appendChild(button);
         }
+
+        // Lưu lại totalPages vào localStorage
+        localStorage.setItem('totalPages', totalPages);
     }
 
+    // Fetch dữ liệu người dùng đăng ký theo tháng
     async function fetchUserRegistrationDataByMonth(year, month) {
         try {
             const response = await fetch(`/api/users/user-registration/by-day?year=${year}&month=${month}`, {
@@ -294,15 +328,14 @@
         }
     }
 
+    // Render biểu đồ người dùng đăng ký
     function renderUserRegistrationChart(labels, data) {
         const ctx = document.getElementById('userRegistrationChart').getContext('2d');
 
-        // Nếu biểu đồ đã tồn tại, hủy nó đi trước khi tạo mới
         if (userRegistrationChart) {
             userRegistrationChart.destroy();
         }
 
-        // Tạo mới biểu đồ với dữ liệu và nhãn mới
         userRegistrationChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -318,23 +351,17 @@
             options: {
                 responsive: true,
                 scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Ngày'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Số lượng'
-                        }
-                    }
+                    x: { title: { display: true, text: 'Ngày' } },
+                    y: { title: { display: true, text: 'Số lượng' } }
                 }
             }
         });
+
+        // Lưu lại dữ liệu biểu đồ vào localStorage
+        localStorage.setItem('userRegistrationChartData', JSON.stringify({ labels, data }));
     }
 
+    // Cập nhật biểu đồ khi chọn năm và tháng
     function updateChart() {
         const year = document.getElementById('yearSelect').value;
         const month = document.getElementById('monthSelect').value;
@@ -342,7 +369,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        fetchUsers();
+        // Tải lại bảng và biểu đồ từ localStorage nếu có
+        loadUsersFromLocalStorage();
+
+        // Kiểm tra và render lại biểu đồ từ localStorage
+        const storedChartData = localStorage.getItem('userRegistrationChartData');
+        if (storedChartData) {
+            const { labels, data } = JSON.parse(storedChartData);
+            renderUserRegistrationChart(labels, data);
+        } else {
+            // Nếu không có dữ liệu, lấy dữ liệu mặc định cho biểu đồ
+            const currentYear = new Date().getFullYear();
+            fetchUserRegistrationDataByMonth(currentYear, 11);
+        }
 
         const currentYear = new Date().getFullYear();
         const yearSelect = document.getElementById('yearSelect');
@@ -355,8 +394,9 @@
             yearSelect.appendChild(option);
         }
 
-        // Lấy dữ liệu và vẽ biểu đồ cho tháng 11 của năm hiện tại
-        fetchUserRegistrationDataByMonth(currentYear, 11);
+        // Lấy trang hiện tại từ localStorage và render lại phân trang
+        const currentPage = localStorage.getItem('currentPage') || 0;
+        fetchUsers(parseInt(currentPage));  // Gọi API chỉ khi cần thiết (chỉ khi không có dữ liệu trong localStorage)
     });
 
 </script>

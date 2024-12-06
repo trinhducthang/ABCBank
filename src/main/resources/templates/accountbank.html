@@ -55,10 +55,29 @@
             height: 200px; /* Kích thước chiều cao biểu đồ */
             margin: 10px; /* Giảm khoảng cách giữa các biểu đồ */
         }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<button class="back-btn" onclick="window.location.href='/dashboard'" >Quay lại trang chủ</button>
+<p></p>
+<p></p>
 <main>
     <section>
         <h2>Bảng số liệu giao dịch</h2>
