@@ -1,1138 +1,897 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="vi">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Dashboard Admin với Sidebar</title>-->
+<!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            display: flex;-->
+<!--            margin: 0;-->
+<!--            font-family: 'Roboto', sans-serif;-->
+<!--            background-color: #f4f7f9;-->
+<!--        }-->
+
+
+
+<!--        .sidebar {-->
+<!--            width: 250px;-->
+<!--            background: #1e1e2f;-->
+<!--            color: white;-->
+<!--            height: 100vh;-->
+<!--            position: fixed;-->
+<!--            top: 0;-->
+<!--            left: 0;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            /*padding-top: 70px;*/-->
+<!--            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+
+<!--        .sidebar nav ul {-->
+<!--            list-style: none;-->
+<!--            padding: 0;-->
+<!--            margin: 0;-->
+<!--        }-->
+
+<!--        .sidebar nav ul li {-->
+<!--            margin: 0;-->
+<!--        }-->
+
+<!--        .sidebar nav ul li a {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            color: white;-->
+<!--            text-decoration: none;-->
+<!--            padding: 15px 20px;-->
+<!--            font-size: 16px;-->
+<!--            transition: all 0.3s ease;-->
+<!--            border-left: 3px solid transparent;-->
+<!--        }-->
+
+<!--        .sidebar nav ul li a:hover {-->
+<!--            background: #4b577f;-->
+<!--            border-left: 3px solid #007BFF;-->
+<!--            padding-left: 17px;-->
+<!--        }-->
+
+<!--        .sidebar nav ul li a.active {-->
+<!--            background: #343a50;-->
+<!--            border-left: 3px solid #007BFF;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .sidebar nav ul li a i {-->
+<!--            margin-right: 10px;-->
+<!--            font-size: 18px;-->
+<!--        }-->
+
+<!--        main {-->
+<!--            margin-left: 250px;-->
+<!--            /*padding-right: 20px;*/-->
+<!--            /*padding-left: 20px;*/-->
+<!--            /*padding-bottom: 20px;*/-->
+<!--            /*padding-top: 80px;*/-->
+<!--            flex-grow: 1;-->
+<!--        }-->
+
+<!--        section {-->
+<!--            margin-bottom: 30px;-->
+<!--        }-->
+
+<!--        table {-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--            margin-top: 10px;-->
+<!--            background: #fff;-->
+<!--            border-radius: 8px;-->
+<!--            overflow: hidden;-->
+<!--        }-->
+
+<!--        table, th, td {-->
+<!--            border: 1px solid #ddd;-->
+<!--        }-->
+
+<!--        th, td {-->
+<!--            padding: 12px;-->
+<!--            text-align: left;-->
+<!--        }-->
+
+<!--        th {-->
+<!--            background: #f2f2f2;-->
+<!--        }-->
+
+<!--        .pagination {-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            margin-top: 10px;-->
+<!--        }-->
+
+<!--        .pagination button {-->
+<!--            padding: 5px 10px;-->
+<!--            margin: 0 2px;-->
+<!--            border: none;-->
+<!--            background-color: #007BFF;-->
+<!--            color: white;-->
+<!--            cursor: pointer;-->
+<!--            border-radius: 4px;-->
+<!--        }-->
+
+<!--        .pagination button.active {-->
+<!--            background-color: #0056b3;-->
+<!--        }-->
+
+<!--        .loading-overlay {-->
+<!--            display: none;-->
+<!--            position: fixed;-->
+<!--            top: 0;-->
+<!--            left: 0;-->
+<!--            width: 100%;-->
+<!--            height: 100%;-->
+<!--            background: rgba(255, 255, 255, 0.7);-->
+<!--            z-index: 1000;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--        }-->
+
+<!--        .loading-overlay.active {-->
+<!--            display: flex;-->
+<!--        }-->
+
+<!--        .spinner {-->
+<!--            border: 5px solid rgba(0, 0, 0, 0.1);-->
+<!--            border-top: 5px solid #007BFF;-->
+<!--            border-radius: 50%;-->
+<!--            width: 40px;-->
+<!--            height: 40px;-->
+<!--            animation: spin 1s linear infinite;-->
+<!--        }-->
+
+<!--        @keyframes spin {-->
+<!--            0% { transform: rotate(0deg); }-->
+<!--            100% { transform: rotate(360deg); }-->
+<!--        }-->
+
+<!--        #timeSelector {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 10px;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        #timeSelector label {-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--    </style>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="sidebar">-->
+<!--    <nav>-->
+<!--        <ul>-->
+<!--            <li><h2 style="text-align: center">ABCBank manage</h2></li>-->
+<!--            <li><a href="/dashboard/loan-offers"><i class="fas fa-dollar-sign"></i> Quản lý khoản vay</a></li>-->
+<!--            <li><a href="/dashboard/account-bank"><i class="fas fa-user"></i> Quản lý tài khoản</a></li>-->
+<!--            <li><a href="/dashboard/transaction-details"><i class="fas fa-exchange-alt"></i> Chi tiết giao dịch</a></li>-->
+<!--            <li><a href="/dashboard/transaction-details/monthly-summary"><i class="fas fa-calendar-alt"></i> Giao dịch theo tháng</a></li>-->
+<!--        </ul>-->
+<!--    </nav>-->
+<!--</div>-->
+
+
+<!--<main style="width: 70%; padding-left: 20px">-->
+<!--    <section>-->
+<!--        <h2>Danh sách người dùng</h2>-->
+<!--        <table id="userTable">-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th>ID</th>-->
+<!--                <th>Username</th>-->
+<!--                <th>Tên</th>-->
+<!--                <th>Email</th>-->
+<!--                <th>Số điện thoại</th>-->
+<!--                <th>Trạng thái</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--        <div id="userPagination" class="pagination"></div>-->
+<!--    </section>-->
+
+<!--    <section>-->
+<!--        <h2>Biểu đồ số lượng người dùng đăng ký</h2>-->
+<!--        <form id="timeSelector">-->
+<!--            <label for="yearSelect">Chọn năm:</label>-->
+<!--            <select id="yearSelect"></select>-->
+
+<!--            <label for="monthSelect">Chọn tháng:</label>-->
+<!--            <select id="monthSelect">-->
+<!--                <option value="1">Tháng 1</option>-->
+<!--                <option value="2">Tháng 2</option>-->
+<!--                <option value="3">Tháng 3</option>-->
+<!--                <option value="4">Tháng 4</option>-->
+<!--                <option value="5">Tháng 5</option>-->
+<!--                <option value="6">Tháng 6</option>-->
+<!--                <option value="7">Tháng 7</option>-->
+<!--                <option value="8">Tháng 8</option>-->
+<!--                <option value="9">Tháng 9</option>-->
+<!--                <option value="10">Tháng 10</option>-->
+<!--                <option value="11">Tháng 11</option>-->
+<!--                <option value="12">Tháng 12</option>-->
+<!--            </select>-->
+
+<!--            <button type="button" onclick="updateChart()">Xem biểu đồ</button>-->
+<!--        </form>-->
+
+<!--        <canvas id="userRegistrationChart" width="400" height="200"></canvas>-->
+<!--    </section>-->
+<!--</main>-->
+
+
+<!--<script>-->
+<!--    const jwtToken = localStorage.getItem('jwtToken');-->
+
+<!--    if (!jwtToken) {-->
+<!--        alert('Bạn cần đăng nhập để tiếp tục.');-->
+<!--        window.location.href = '/login';-->
+<!--    }-->
+
+<!--    const checkTokenAndRedirect = () => {-->
+<!--        if (jwtToken) {-->
+<!--            const introspectRequest = { token: jwtToken };-->
+<!--            fetch('/auth/introspect', {-->
+<!--                method: 'POST',-->
+<!--                headers: { 'Content-Type': 'application/json' },-->
+<!--                body: JSON.stringify(introspectRequest)-->
+<!--            })-->
+<!--                .then(response => response.json())-->
+<!--                .then(data => {-->
+<!--                    if (!(data.code === 200 && data.result && data.result.valid === true)) {-->
+<!--                        window.location.href = '/login';-->
+<!--                    }-->
+<!--                })-->
+<!--                .catch(error => {-->
+<!--                    console.error('Lỗi kiểm tra token:', error);-->
+<!--                });-->
+<!--        }-->
+<!--    };-->
+<!--    checkTokenAndRedirect();-->
+
+<!--    let userRegistrationChart = null;  // Biến toàn cục lưu đối tượng biểu đồ-->
+
+<!--    function showLoading() {-->
+<!--        document.getElementById("loadingOverlay").classList.add("active");-->
+<!--    }-->
+
+<!--    function hideLoading() {-->
+<!--        document.getElementById("loadingOverlay").classList.remove("active");-->
+<!--    }-->
+
+<!--    // Lấy dữ liệu người dùng từ localStorage nếu có-->
+<!--    function loadUsersFromLocalStorage() {-->
+<!--        const storedUsers = localStorage.getItem('userTableData');-->
+<!--        if (storedUsers) {-->
+<!--            renderUsers(JSON.parse(storedUsers));-->
+<!--            const storedPage = localStorage.getItem('currentPage');-->
+<!--            if (storedPage) {-->
+<!--                const currentPage = parseInt(storedPage, 10);-->
+<!--                renderPaginationFromLocalStorage(currentPage);-->
+<!--            }-->
+<!--        } else {-->
+<!--            fetchUsers(0);  // Nếu không có dữ liệu bảng trong localStorage, fetch dữ liệu-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Fetch dữ liệu người dùng từ API-->
+<!--    async function fetchUsers(page = 0) {-->
+<!--        showLoading();-->
+<!--        try {-->
+<!--            const response = await fetch(`/api/users?page=${page}&size=5`, {-->
+<!--                method: 'GET',-->
+<!--                headers: { 'Authorization': `Bearer ${jwtToken}` }-->
+<!--            });-->
+<!--            const data = await response.json();-->
+<!--            renderUsers(data.content);-->
+<!--            renderPagination(data.totalPages, page, 'userPagination', fetchUsers);-->
+
+<!--            // Lưu lại dữ liệu bảng và trang vào localStorage-->
+<!--            localStorage.setItem('userTableData', JSON.stringify(data.content));-->
+<!--            localStorage.setItem('currentPage', page);-->
+<!--        } catch (error) {-->
+<!--            console.error("Network error:", error);-->
+<!--            alert("Access denied");-->
+<!--        } finally {-->
+<!--            hideLoading();-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Render bảng người dùng-->
+<!--    function renderUsers(users) {-->
+<!--        const tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];-->
+<!--        tableBody.innerHTML = '';-->
+<!--        users.forEach(user => {-->
+<!--            const row = tableBody.insertRow();-->
+<!--            row.innerHTML = `-->
+<!--            <td>${user.id}</td>-->
+<!--            <td>${user.username}</td>-->
+<!--            <td>${user.firstName || ''} ${user.lastName || ''}</td>-->
+<!--            <td>${user.email || ''}</td>-->
+<!--            <td>${user.phone || ''}</td>-->
+<!--            <td>${user.status || 'Đang hoạt động'}</td>-->
+<!--        `;-->
+<!--        });-->
+<!--    }-->
+
+<!--    // Render phân trang từ dữ liệu trong localStorage-->
+<!--    function renderPaginationFromLocalStorage(currentPage) {-->
+<!--        const storedTotalPages = localStorage.getItem('totalPages');-->
+<!--        if (storedTotalPages) {-->
+<!--            renderPagination(parseInt(storedTotalPages, 10), currentPage, 'userPagination', fetchUsers);-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Render phân trang-->
+<!--    function renderPagination(totalPages, currentPage, containerId, callback) {-->
+<!--        const container = document.getElementById(containerId);-->
+<!--        container.innerHTML = '';-->
+<!--        for (let i = 0; i < totalPages; i++) {-->
+<!--            const button = document.createElement('button');-->
+<!--            button.textContent = i + 1;-->
+<!--            button.onclick = () => callback(i);-->
+<!--            if (i === currentPage) {-->
+<!--                button.classList.add('active');-->
+<!--            }-->
+<!--            container.appendChild(button);-->
+<!--        }-->
+
+<!--        // Lưu lại totalPages vào localStorage-->
+<!--        localStorage.setItem('totalPages', totalPages);-->
+<!--    }-->
+
+<!--    // Fetch dữ liệu người dùng đăng ký theo tháng-->
+<!--    async function fetchUserRegistrationDataByMonth(year, month) {-->
+<!--        try {-->
+<!--            const response = await fetch(`/api/users/user-registration/by-day?year=${year}&month=${month}`, {-->
+<!--                method: 'GET',-->
+<!--                headers: { 'Authorization': `Bearer ${jwtToken}` }-->
+<!--            });-->
+<!--            const data = await response.json();-->
+
+<!--            if (data.result && Array.isArray(data.result)) {-->
+<!--                const userCounts = data.result;-->
+<!--                const labels = [];-->
+<!--                const daysInMonth = new Date(year, month, 0).getDate();-->
+
+<!--                // Tạo danh sách ngày trong tháng-->
+<!--                for (let day = 1; day <= daysInMonth; day++) {-->
+<!--                    labels.push(`${day}-${month < 10 ? '0' + month : month}-${year}`);-->
+<!--                }-->
+
+<!--                renderUserRegistrationChart(labels, userCounts);-->
+<!--            } else {-->
+<!--                console.error("Dữ liệu trả về không hợp lệ:", data);-->
+<!--            }-->
+<!--        } catch (error) {-->
+<!--            console.error("Error fetching user registration data:", error);-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Render biểu đồ người dùng đăng ký-->
+<!--    function renderUserRegistrationChart(labels, data) {-->
+<!--        const ctx = document.getElementById('userRegistrationChart').getContext('2d');-->
+
+<!--        if (userRegistrationChart) {-->
+<!--            userRegistrationChart.destroy();-->
+<!--        }-->
+
+<!--        userRegistrationChart = new Chart(ctx, {-->
+<!--            type: 'line',-->
+<!--            data: {-->
+<!--                labels: labels,-->
+<!--                datasets: [{-->
+<!--                    label: 'Số lượng người dùng đăng ký',-->
+<!--                    data: data,-->
+<!--                    borderColor: 'rgba(0, 123, 255, 1)',-->
+<!--                    backgroundColor: 'rgba(0, 123, 255, 0.1)',-->
+<!--                    fill: true-->
+<!--                }]-->
+<!--            },-->
+<!--            options: {-->
+<!--                responsive: true,-->
+<!--                scales: {-->
+<!--                    x: { title: { display: true, text: 'Ngày' } },-->
+<!--                    y: { title: { display: true, text: 'Số lượng' } }-->
+<!--                }-->
+<!--            }-->
+<!--        });-->
+
+<!--        // Lưu lại dữ liệu biểu đồ vào localStorage-->
+<!--        localStorage.setItem('userRegistrationChartData', JSON.stringify({ labels, data }));-->
+<!--    }-->
+
+<!--    // Cập nhật biểu đồ khi chọn năm và tháng-->
+<!--    function updateChart() {-->
+<!--        const year = document.getElementById('yearSelect').value;-->
+<!--        const month = document.getElementById('monthSelect').value;-->
+<!--        fetchUserRegistrationDataByMonth(year, month);-->
+<!--    }-->
+
+<!--    document.addEventListener('DOMContentLoaded', () => {-->
+<!--        // Tải lại bảng và biểu đồ từ localStorage nếu có-->
+<!--        loadUsersFromLocalStorage();-->
+
+<!--        // Kiểm tra và render lại biểu đồ từ localStorage-->
+<!--        const storedChartData = localStorage.getItem('userRegistrationChartData');-->
+<!--        if (storedChartData) {-->
+<!--            const { labels, data } = JSON.parse(storedChartData);-->
+<!--            renderUserRegistrationChart(labels, data);-->
+<!--        } else {-->
+<!--            // Nếu không có dữ liệu, lấy dữ liệu mặc định cho biểu đồ-->
+<!--            const currentYear = new Date().getFullYear();-->
+<!--            fetchUserRegistrationDataByMonth(currentYear, 11);-->
+<!--        }-->
+
+<!--        const currentYear = new Date().getFullYear();-->
+<!--        const yearSelect = document.getElementById('yearSelect');-->
+
+<!--        // Tạo các option cho chọn năm-->
+<!--        for (let i = currentYear; i >= currentYear - 10; i&#45;&#45;) {-->
+<!--            const option = document.createElement('option');-->
+<!--            option.value = i;-->
+<!--            option.textContent = i;-->
+<!--            yearSelect.appendChild(option);-->
+<!--        }-->
+
+<!--        // Lấy trang hiện tại từ localStorage và render lại phân trang-->
+<!--        const currentPage = localStorage.getItem('currentPage') || 0;-->
+<!--        fetchUsers(parseInt(currentPage));  // Gọi API chỉ khi cần thiết (chỉ khi không có dữ liệu trong localStorage)-->
+<!--    });-->
+
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Management Dashboard</title>
+    <title>Dashboard Admin với Sidebar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f9;
+        }
 
+        .sidebar {
+            width: 250px;
+            background: #1e1e2f;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            margin: 0;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar nav ul li a:hover {
+            background: #4b577f;
+            border-left: 3px solid #007BFF;
+            padding-left: 17px;
+        }
+
+        .sidebar nav ul li a.active {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
+            font-weight: bold;
+        }
+
+        .sidebar nav ul li a i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        main {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding-left: 20px;
+        }
+
+        section {
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .pagination button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .pagination button.active {
+            background-color: #0056b3;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #007BFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #timeSelector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #timeSelector label {
+            font-weight: bold;
+        }
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<div class="container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Menu</h2>
-        <a href="#dashboard" class="menu-item active">Dashboard</a>
-        <a href="#loan-offers" class="menu-item">Quản lý khoản vay</a>
-        <a href="#transaction-details" class="menu-item">Chi tiết giao dịch</a>
-        <a href="#transaction-summary" class="menu-item">Giao dịch theo tháng</a>
-    </div>
-
-    <!-- Nội dung chính -->
-    <div class="content">
-        <section id="dashboard" class="tab-content active">
-            <!DOCTYPE html>
-            <!DOCTYPE html>
-            <html lang="vi">
-
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Dashboard Admin</title>
-                <style>
-                    * {
-                        box-sizing: border-box;
-                        margin: 0;
-                        padding: 0;
-                    }
-
-                    body {
-                        font-family: 'Arial', sans-serif;
-                        display: flex;
-                        height: 100vh;
-                        background-color: #f4f7f9;
-                    }
-
-                    /* Sidebar Style */
-                    .admin-sidebar {
-                        width: 250px;
-                        background-color: #007BFF;
-                        color: white;
-                        padding: 20px;
-                        position: fixed;
-                        height: 100%;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                    }
-
-                    .admin-sidebar h2 {
-                        text-align: center;
-                        margin-bottom: 30px;
-                    }
-
-                    .admin-sidebar nav a {
-                        text-decoration: none;
-                        color: white;
-                        margin: 10px 0;
-                        font-weight: bold;
-                        padding: 10px;
-                        border-radius: 5px;
-                        transition: background-color 0.3s;
-                    }
-
-                    .admin-sidebar nav a:hover {
-                        background-color: #0056b3;
-                    }
-
-                    /* Main Content Style */
-                    .admin-content {
-                        margin-left: 250px;
-                        padding: 20px;
-                        flex-grow: 1;
-                        overflow-y: auto;
-                        background-color: white;
-                    }
-
-                    /* Header Style */
-                    .admin-header {
-                        background-color: #007BFF;
-                        color: white;
-                        padding: 15px;
-                        text-align: center;
-                        font-size: 24px;
-                    }
-
-                    /* Table Styles */
-                    .admin-table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-top: 10px;
-                    }
-
-                    .admin-table, .admin-table th, .admin-table td {
-                        border: 1px solid #ddd;
-                    }
-
-                    .admin-table th, .admin-table td {
-                        padding: 12px;
-                        text-align: left;
-                    }
-
-                    .admin-table th {
-                        background-color: #f4f4f4;
-                    }
-
-                    /* Pagination Style */
-                    .admin-pagination {
-                        display: flex;
-                        justify-content: center;
-                        margin-top: 15px;
-                    }
-
-                    .admin-pagination button {
-                        padding: 8px 15px;
-                        margin: 0 5px;
-                        border: none;
-                        background-color: #007BFF;
-                        color: white;
-                        cursor: pointer;
-                    }
-
-                    .admin-pagination button.active {
-                        background-color: #0056b3;
-                    }
-
-                    /* Loading Overlay Style */
-                    .admin-loading-overlay {
-                        display: none;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(255, 255, 255, 0.7);
-                        z-index: 1000;
-                        justify-content: center;
-                        align-items: center;
-                    }
-
-                    .admin-loading-overlay.active {
-                        display: flex;
-                    }
-
-                    .admin-spinner {
-                        border: 5px solid rgba(0, 0, 0, 0.1);
-                        border-top: 5px solid #007BFF;
-                        border-radius: 50%;
-                        width: 40px;
-                        height: 40px;
-                        animation: spin 1s linear infinite;
-                    }
-
-                    @keyframes spin {
-                        0% {
-                            transform: rotate(0deg);
-                        }
-
-                        100% {
-                            transform: rotate(360deg);
-                        }
-                    }
-
-                    /* Time Selector Form */
-                    .admin-time-selector {
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        margin-bottom: 20px;
-                    }
-
-                    .admin-time-selector label {
-                        font-weight: bold;
-                    }
-
-                    /* Canvas Style for Chart */
-                    .admin-chart-container {
-                        margin-top: 20px;
-                    }
-                </style>
-            </head>
-
-            <body>
-            <div class="admin-sidebar">
-                <h2>Admin Dashboard</h2>
-                <nav>
-                    <a href="/dashboard/loan-offers">Quản lý khoản vay</a>
-                    <a href="/dashboard/account-bank">Quản lý tài khoản</a>
-                    <a href="/dashboard/transaction-details">Chi tiết giao dịch</a>
-                    <a href="/dashboard/transaction-details/monthly-summary">Giao dịch theo tháng</a>
-                </nav>
-            </div>
-
-            <div class="admin-content">
-                <header class="admin-header">
-                    <h1>Dashboard</h1>
-                </header>
-
-                <div class="admin-loading-overlay" id="loadingOverlay">
-                    <div class="admin-spinner"></div>
-                </div>
-
-                <section>
-                    <h2>Danh sách người dùng</h2>
-                    <table class="admin-table" id="userTable">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Tên</th>
-                            <th>Email</th>
-                            <th>Số điện thoại</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <div id="userPagination" class="admin-pagination"></div>
-                </section>
-
-                <section>
-                    <h2>Biểu đồ số lượng người dùng đăng ký</h2>
-                    <form class="admin-time-selector" id="timeSelector">
-                        <label for="yearSelect">Chọn năm:</label>
-                        <select id="yearSelect"></select>
-
-                        <label for="monthSelect">Chọn tháng:</label>
-                        <select id="monthSelect">
-                            <option value="1">Tháng 1</option>
-                            <option value="2">Tháng 2</option>
-                            <option value="3">Tháng 3</option>
-                            <option value="4">Tháng 4</option>
-                            <option value="5">Tháng 5</option>
-                            <option value="6">Tháng 6</option>
-                            <option value="7">Tháng 7</option>
-                            <option value="8">Tháng 8</option>
-                            <option value="9">Tháng 9</option>
-                            <option value="10">Tháng 10</option>
-                            <option value="11">Tháng 11</option>
-                            <option value="12">Tháng 12</option>
-                        </select>
-                        <button type="button" onclick="updateChart()">Xem biểu đồ</button>
-                    </form>
-
-                    <div class="admin-chart-container">
-                        <canvas id="userRegistrationChart" width="400" height="200"></canvas>
-                    </div>
-                </section>
-            </div>
-
-            <footer class="admin-footer">
-                <p>&copy; 2024 Trinh Duc Thang. Bảo lưu mọi quyền.</p>
-            </footer>
-
-            <script>
-                const jwtToken = localStorage.getItem('jwtToken');
-
-                if (!jwtToken) {
-                    alert('Bạn cần đăng nhập để tiếp tục.');
-                    window.location.href = '/login';
-                }
-
-                const checkTokenAndRedirect = () => {
-                    if (jwtToken) {
-                        const introspectRequest = { token: jwtToken };
-                        fetch('/auth/introspect', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(introspectRequest)
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (!(data.code === 200 && data.result && data.result.valid === true)) {
-                                    window.location.href = '/login';
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Lỗi kiểm tra token:', error);
-                            });
-                    }
-                };
-                checkTokenAndRedirect();
-
-                let userRegistrationChart = null;
-
-                function showLoading() {
-                    document.getElementById("loadingOverlay").classList.add("active");
-                }
-
-                function hideLoading() {
-                    document.getElementById("loadingOverlay").classList.remove("active");
-                }
-
-                async function fetchUsers(page = 0) {
-                    showLoading();
-                    try {
-                        const response = await fetch(`/api/users?page=${page}&size=5`, {
-                            method: 'GET',
-                            headers: { 'Authorization': `Bearer ${jwtToken}` }
-                        });
-                        const data = await response.json();
-                        renderUsers(data.content);
-                        renderPagination(data.totalPages, page, 'userPagination', fetchUsers);
-                    } catch (error) {
-                        console.error("Network error:", error);
-                        alert("Access denied");
-                    } finally {
-                        hideLoading();
-                    }
-                }
-
-                function renderUsers(users) {
-                    const tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
-                    tableBody.innerHTML = '';
-                    users.forEach(user => {
-                        const row = tableBody.insertRow();
-                        row.innerHTML = `
-                    <td>${user.id}</td>
-                    <td>${user.username}</td>
-                    <td>${user.firstName || ''} ${user.lastName || ''}</td>
-                    <td>${user.email || ''}</td>
-                    <td>${user.phoneNumber || ''}</td>
-                    <td>${user.status || ''}</td>
-                `;
-                    });
-                }
-
-                function renderPagination(totalPages, currentPage, paginationElementId, onPageChange) {
-                    const paginationElement = document.getElementById(paginationElementId);
-                    paginationElement.innerHTML = '';
-                    for (let i = 0; i < totalPages; i++) {
-                        const button = document.createElement('button');
-                        button.textContent = i + 1;
-                        if (i === currentPage) {
-                            button.classList.add('active');
-                        }
-                        button.addEventListener('click', () => onPageChange(i));
-                        paginationElement.appendChild(button);
-                    }
-                }
-
-                async function fetchChartData(year, month) {
-                    showLoading();
-                    try {
-                        const response = await fetch(`/api/users/registration-stats?year=${year}&month=${month}`, {
-                            method: 'GET',
-                            headers: { 'Authorization': `Bearer ${jwtToken}` }
-                        });
-                        const data = await response.json();
-                        renderChart(data);
-                    } catch (error) {
-                        console.error("Error fetching chart data:", error);
-                        alert("Lỗi khi tải biểu đồ");
-                    } finally {
-                        hideLoading();
-                    }
-                }
-
-                function renderChart(data) {
-                    const ctx = document.getElementById('userRegistrationChart').getContext('2d');
-                    if (userRegistrationChart) {
-                        userRegistrationChart.destroy();
-                    }
-                    userRegistrationChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: data.labels,
-                            datasets: [{
-                                label: 'Số lượng người dùng đăng ký',
-                                data: data.values,
-                                borderColor: 'rgba(0, 123, 255, 1)',
-                                backgroundColor: 'rgba(0, 123, 255, 0.2)',
-                                fill: true
-                            }]
-                        }
-                    });
-                }
-
-                document.getElementById('timeSelector').addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    const year = document.getElementById('yearSelect').value;
-                    const month = document.getElementById('monthSelect').value;
-                    fetchChartData(year, month);
-                });
-
-                fetchUsers();
-            </script>
-            </body>
-
-            </html>
-
-        </section>
-
-        <section id="loan-offers" class="tab-content">
-            <h1>Quản lý khoản vay</h1>
-            <div class="container">
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Loan Offer Management</title>
-                    <style>
-                        /* styles.css */
-                        body {
-                            font-family: Arial, sans-serif;
-                            background-color: #f4f4f4;
-                            margin: 0;
-                            padding: 0;
-                        }
-
-                        .container {
-                            width: 80%;
-                            margin: 0 auto;
-                            padding: 20px;
-                            background-color: white;
-                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                        }
-
-                        h1 {
-                            text-align: center;
-                            color: #333;
-                        }
-
-                        h2 {
-                            color: #333;
-                            font-size: 20px;
-                        }
-
-                        .form-container {
-                            background-color: #f9f9f9;
-                            padding: 20px;
-                            border-radius: 5px;
-                            margin-bottom: 20px;
-                        }
-
-                        form {
-                            display: flex;
-                            flex-direction: column;
-                        }
-
-                        form label {
-                            margin: 5px 0;
-                            font-weight: bold;
-                        }
-
-                        form input {
-                            padding: 10px;
-                            margin: 10px 0;
-                            border: 1px solid #ddd;
-                            border-radius: 5px;
-                        }
-
-                        form button {
-                            padding: 10px;
-                            background-color: #4A90E2;
-                            color: white;
-                            border: none;
-                            border-radius: 5px;
-                            cursor: pointer;
-                        }
-
-                        form button:hover {
-                            background-color: #4A90E2;
-                        }
-
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
-
-                        table th, table td {
-                            padding: 12px;
-                            text-align: left;
-                            border-bottom: 1px solid #ddd;
-                        }
-
-                        button {
-                            padding: 5px 10px;
-                            background-color: #4A90E2;
-                            color: white;
-                            border: none;
-                            border-radius: 3px;
-                            cursor: pointer;
-                        }
-
-                        button:hover {
-                            background-color: #4A90E2;
-                        }
-                    </style>
-                </head>
-                <body>
-                <div class="container">
-                    <h1>Quản lý khoản vay</h1>
-
-                    <!-- Form to create or update a loan offer -->
-                    <div id="loanForm" class="form-container">
-                        <h2>Tạo / Cập nhật khoản vay</h2>
-                        <form id="loanOfferForm">
-                            <label for="loanAmount">Số tiền vay :</label>
-                            <input type="number" id="loanAmount" name="loanAmount" required>
-
-                            <label for="interestRate">Lãi suất (%):</label>
-                            <input type="number" id="interestRate" name="interestRate" required>
-
-                            <label for="duration">Kì hạn(Tháng):</label>
-                            <input type="text" id="duration" name="duration" required>
-
-                            <button type="submit">Lưu Khoản Vay</button>
-                        </form>
-                    </div>
-
-                    <!-- Loan Offers Table -->
-                    <h2>Danh sách khoản vay</h2>
-                    <table id="loanOffersTable">
-                        <thead>
-                        <tr>
-                            <th>Số tiền vay</th>
-                            <th>Lãi suất</th>
-                            <th>Kì hạn(Tháng)</th>
-                            <th>Sửa/Xóa</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-
-                <script>
-                    // app.js (Inline script)
-
-                    const apiUrl = 'http://localhost:8888/loanOffer'; // API URL
-
-                    // DOM Elements
-                    const loanOfferForm = document.getElementById('loanOfferForm');
-                    const loanOffersTable = document.getElementById('loanOffersTable').getElementsByTagName('tbody')[0];
-
-                    let currentLoanOfferId = null; // To store current loan offer ID for update
-
-                    // Load all loan offers when the page loads
-                    window.onload = function() {
-                        fetchLoanOffers();
-                    };
-
-                    // Fetch all loan offers and display them in the table
-                    function fetchLoanOffers() {
-                        fetch(apiUrl)
-                            .then(response => response.json())
-                            .then(data => {
-                                displayLoanOffers(data.result);
-                            })
-                            .catch(error => console.error('Error fetching loan offers:', error));
-                    }
-
-                    // Display loan offers in the table
-                    function displayLoanOffers(loanOffers) {
-                        loanOffersTable.innerHTML = ''; // Clear the table before rendering
-                        loanOffers.forEach(loanOffer => {
-                            const row = loanOffersTable.insertRow();
-                            row.innerHTML = `
-                    <td>${loanOffer.loanAmount}</td>
-                    <td>${loanOffer.interestRate}</td>
-                    <td>${loanOffer.duration}</td>
-                    <td>
-                        <button onclick="editLoanOffer(${loanOffer.offerId})">Sửa</button>
-                        <button onclick="deleteLoanOffer(${loanOffer.offerId})">Xóa</button>
-                    </td>
-                `;
-                        });
-                    }
-
-                    // Add or update loan offer
-                    loanOfferForm.addEventListener('submit', function(event) {
-                        event.preventDefault();
-
-                        const loanAmount = document.getElementById('loanAmount').value;
-                        const interestRate = document.getElementById('interestRate').value;
-                        const duration = document.getElementById('duration').value;
-
-                        const loanOffer = {
-                            loanAmount: loanAmount,
-                            interestRate: interestRate,
-                            duration: duration
-                        };
-
-                        let url = apiUrl;
-                        let method = 'POST'; // Default is POST (Create)
-
-                        // If we're editing an existing loan offer, update with PUT method
-                        if (currentLoanOfferId) {
-                            url = `${apiUrl}/${currentLoanOfferId}`;
-                            method = 'PUT'; // Update
-                        }
-
-                        // Send request (POST for create, PUT for update)
-                        fetch(url, {
-                            method: method,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(loanOffer)
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                fetchLoanOffers(); // Refresh the list
-                                resetForm(); // Reset the form
-                            })
-                            .catch(error => console.error('Error saving loan offer:', error));
-                    });
-
-                    // Edit loan offer
-                    function editLoanOffer(offerId) {
-                        fetch(`${apiUrl}/${offerId}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const loanOffer = data.result;
-                                document.getElementById('loanAmount').value = loanOffer.loanAmount;
-                                document.getElementById('interestRate').value = loanOffer.interestRate;
-                                document.getElementById('duration').value = loanOffer.duration;
-                                currentLoanOfferId = offerId; // Store offerId for future updates
-                            })
-                            .catch(error => console.error('Error fetching loan offer:', error));
-                    }
-
-                    // Delete loan offer
-                    function deleteLoanOffer(offerId) {
-                        if (confirm('Are you sure you want to delete this loan offer?')) {
-                            fetch(`${apiUrl}/${offerId}`, {
-                                method: 'DELETE'
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    fetchLoanOffers(); // Refresh the list
-                                })
-                                .catch(error => console.error('Error deleting loan offer:', error));
-                        }
-                    }
-
-                    // Reset form
-                    function resetForm() {
-                        loanOfferForm.reset();
-                        currentLoanOfferId = null; // Clear the offerId after resetting the form
-                    }
-                </script>
-                </body>
-                </html>
-
-            </div>
-        </section>
-
-        <section id="transaction-details" class="tab-content">
-            <h1>Chi tiết giao dịch</h1>
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Transaction Details</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        padding: 20px;
-                        background-color: #f4f4f9;
-                    }
-                    h1 {
-                        text-align: center;
-                        margin-bottom: 20px;
-                    }
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin: 20px 0;
-                        background-color: white;
-                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-                    }
-                    table, th, td {
-                        border: 1px solid #ddd;
-                    }
-                    th, td {
-                        padding: 12px;
-                        text-align: center;
-                    }
-                    th {
-                        background-color: #4A90E2;
-                        color: white;
-                    }
-                    td {
-                        font-size: 14px;
-                    }
-                    .pagination {
-                        display: flex;
-                        justify-content: center;
-                        margin-top: 20px;
-                    }
-                    .pagination button {
-                        padding: 10px 20px;
-                        margin: 0 10px;
-                        cursor: pointer;
-                        background-color: #4A90E2;
-                        color: white;
-                        border: none;
-                        border-radius: 5px;
-                    }
-                    .pagination button:disabled {
-                        background-color: #ddd;
-                        cursor: not-allowed;
-                    }
-                    .pagination button:hover {
-                        background-color:#4A90E2;
-                    }
-                    .back-btn {
-                        position: absolute;
-                        top: 20px;
-                        left: 20px;
-                        background-color: #007bff;
-                        color: white;
-                        padding: 10px 15px;
-                        font-size: 14px;
-                        border: none;
-                        border-radius: 5px;
-                        cursor: pointer;
-                    }
-
-                    .back-btn:hover {
-                        background-color: #0056b3;
-                    }
-                </style>
-            </head>
-            <body>
-            <button class="back-btn" onclick="window.location.href = '/dashboard'">Quay lại trang chủ</button>
-
-            <h1>Transaction Details</h1>
-
-            <!-- Table to display the transactions -->
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Bank Number</th>
-                    <th>Amount</th>
-                    <th>Description</th>
-                    <th>Transaction Date</th>
-                </tr>
-                </thead>
-                <tbody id="transactionTableBody">
-                <!-- Rows will be inserted dynamically -->
-                </tbody>
-            </table>
-
-            <!-- Pagination controls -->
-            <div class="pagination" id="paginationControls">
-                <button id="prevBtn" disabled>Previous</button>
-                <button id="nextBtn" disabled>Next</button>
-            </div>
-
-            <script>
-                // Initialize pagination variables
-                let currentPage = 0;
-                let totalPages = 0;
-
-                // Function to load transactions for the current page
-                function loadTransactions(page = 0) {  // Đảm bảo mặc định trang là 0
-                    // Lấy JWT token từ localStorage (hoặc từ nơi bạn lưu)
-                    const jwtToken = localStorage.getItem('jwtToken'); // Điều chỉnh theo cách bạn lưu token
-
-                    // Kiểm tra nếu có JWT token
-                    if (!jwtToken) {
-                        alert("JWT token không có! Vui lòng đăng nhập lại.");
-                        return;
-                    }
-
-                    // Thực hiện yêu cầu API với JWT token trong header Authorization
-                    fetch(`/transactions?page=${page}&size=10`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${jwtToken}`,  // Thêm JWT token vào header
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Lỗi khi tải dữ liệu giao dịch.");
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // Update the table with transaction data
-                            const tableBody = document.getElementById('transactionTableBody');
-                            tableBody.innerHTML = ''; // Clear existing rows
-
-                            data.content.forEach(transaction => {
-                                const row = document.createElement('tr');
-                                row.innerHTML = `
-            <td>${transaction.id}</td>
-            <td>${transaction.bankNumber}</td>
-            <td>${transaction.amount}</td>
-            <td>${transaction.description}</td>
-            <td>${transaction.transactionDate}</td>
-        `;
-                                tableBody.appendChild(row);
-                            });
-
-                            // Update pagination information
-                            totalPages = data.totalPages;
-                            currentPage = data.number;
-
-                            // Enable or disable pagination buttons
-                            document.getElementById('prevBtn').disabled = currentPage === 0;
-                            document.getElementById('nextBtn').disabled = currentPage === totalPages - 1;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching transaction data:', error);
-                        });
-                }
-
-                // Load initial data
-                loadTransactions();
-
-                // Add event listeners for pagination buttons
-                document.getElementById('prevBtn').addEventListener('click', () => {
-                    if (currentPage > 0) {
-                        loadTransactions(currentPage - 1);
-                    }
-                });
-
-                document.getElementById('nextBtn').addEventListener('click', () => {
-                    if (currentPage < totalPages - 1) {
-                        loadTransactions(currentPage + 1);
-                    }
-                });
-
-            </script>
-
-            </body>
-            </html>
-
-        </section>
-
-        <section id="transaction-summary" class="tab-content">
-            <h1>Giao dịch theo tháng</h1>
-            <!DOCTYPE html>
-            <html lang="vi">
-            <head>
-                <meta charset="UTF-8">
-                <title>Tổng Số Tiền Giao Dịch Hàng Ngày Trong Tháng</title>
-                <!-- Thêm CSS cho trang -->
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        margin: 20px;
-                        background-color: #e0e7ff;  /* Màu nền trang sáng, giống như trong ví dụ trước */
-                    }
-
-                    h1 {
-                        text-align: center;
-                        color: #3b5998;  /* Màu tiêu đề đậm hơn, giống như màu xanh đậm */
-                    }
-
-                    .input-section {
-                        margin-bottom: 20px;
-                        text-align: center;
-                    }
-
-                    .input-section label {
-                        margin: 0 10px;
-                        font-weight: bold;
-                    }
-
-                    .input-section input {
-                        padding: 5px;
-                        margin-right: 20px;
-                        width: 100px;
-                    }
-
-                    .input-section button {
-                        padding: 5px 10px;
-                        font-size: 16px;
-                        background-color: #007bff;  /* Màu nền nút xanh lam */
-                        color: white;
-                        border: none;
-                        border-radius: 5px;
-                        cursor: pointer;
-                    }
-
-                    .input-section button:hover {
-                        background-color: #0056b3;  /* Màu khi hover vào nút */
-                    }
-
-                    .chart-container {
-                        width: 100%;
-                        max-width: 800px;
-                        margin: 0 auto 40px;
-                    }
-
-                    table {
-                        width: 100%;
-                        max-width: 800px;
-                        margin: 0 auto;
-                        border-collapse: collapse;
-                        background-color: #fff;
-                    }
-
-                    table th, table td {
-                        padding: 12px;
-                        border: 1px solid #ddd;
-                        text-align: center;
-                    }
-
-                    table th {
-                        background-color: #007bff;  /* Màu nền tiêu đề bảng */
-                        color: white;
-                    }
-
-                    table td {
-                        font-size: 14px;
-                    }
-
-                    .error {
-                        color: red;
-                        text-align: center;
-                        margin-top: 20px;
-                    }
-
-                    /* Màn hình nhỏ */
-                    @media (max-width: 600px) {
-                        .input-section input {
-                            width: 80px;
-                        }
-                        .input-section button {
-                            width: 100%;
-                            margin-top: 10px;
-                        }
-                        table th, table td {
-                            padding: 8px;
-                        }
-                    }
-                    .back-btn {
-                        position: absolute;
-                        top: 20px;
-                        left: 20px;
-                        background-color: #007bff;
-                        color: white;
-                        padding: 10px 15px;
-                        font-size: 14px;
-                        border: none;
-                        border-radius: 5px;
-                        cursor: pointer;
-                    }
-
-                    .back-btn:hover {
-                        background-color: #0056b3;
-                    }
-                </style>
-                <!-- Thêm Chart.js từ CDN -->
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                <!-- Thêm Axios từ CDN -->
-                <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-            </head>
-            <body>
-            <button class="back-btn" onclick="window.location.href='/dashboard'" >Quay lại trang chủ</button>
-            <h1>Tổng Số Tiền Giao Dịch Hàng Ngày Trong Tháng</h1>
-
-            <div class="input-section">
-                <label for="year">Năm:</label>
-                <input type="number" id="year" value="2024" min="2000" max="2100">
-
-                <label for="month">Tháng:</label>
-                <input type="number" id="month" value="11" min="1" max="12">
-
-                <button onclick="fetchTransactionSummary()">Lấy Dữ Liệu</button>
-            </div>
-
-            <div class="chart-container">
-                <canvas id="transactionChart"></canvas>
-            </div>
-
-            <table id="transactionTable">
-                <thead>
-                <tr>
-                    <th>Ngày</th>
-                    <th>Tổng Số Tiền (VND)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Dữ liệu sẽ được thêm vào đây -->
-                </tbody>
-            </table>
-
-            <div class="error" id="errorMessage"></div>
-
-            <!-- JavaScript để xử lý dữ liệu và vẽ biểu đồ -->
-            <script>
-                let transactionChart = null;
-
-                // Hàm để lấy dữ liệu từ API
-                async function fetchTransactionSummary() {
-                    const year = document.getElementById('year').value;
-                    const month = document.getElementById('month').value;
-                    const errorMessage = document.getElementById('errorMessage');
-                    errorMessage.textContent = ''; // Xóa thông báo lỗi trước đó
-
-                    // Kiểm tra đầu vào
-                    if (year < 2000 || year > 2100) {
-                        errorMessage.textContent = 'Vui lòng nhập năm hợp lệ (2000 - 2100).';
-                        return;
-                    }
-                    if (month < 1 || month > 12) {
-                        errorMessage.textContent = 'Vui lòng nhập tháng hợp lệ (1 - 12).';
-                        return;
-                    }
-
-                    try {
-                        // Thực hiện yêu cầu GET đến API
-                        const response = await axios.get('/monthly-summary', {
-                            params: { year: year, month: month }
-                        });
-
-                        const data = response.data;
-
-                        // Kiểm tra dữ liệu trả về
-                        if (!Array.isArray(data)) {
-                            throw new Error('Dữ liệu không hợp lệ.');
-                        }
-
-                        // Xóa dữ liệu bảng cũ
-                        const tableBody = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
-                        tableBody.innerHTML = '';
-
-                        // Chuẩn bị dữ liệu cho biểu đồ
-                        const labels = [];
-                        const amounts = [];
-
-                        // Thêm dữ liệu vào bảng và mảng cho biểu đồ
-                        data.forEach(item => {
-                            const date = new Date(item[0]); // Giả sử item[0] là ngày dưới dạng ISO string
-                            const totalAmount = item[1];
-
-                            // Thêm hàng vào bảng
-                            const row = tableBody.insertRow();
-                            const cellDate = row.insertCell(0);
-                            const cellAmount = row.insertCell(1);
-                            cellDate.textContent = date.toLocaleDateString('vi-VN');
-                            cellAmount.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalAmount);
-
-                            // Thêm dữ liệu cho biểu đồ
-                            labels.push(date.toLocaleDateString('vi-VN'));
-                            amounts.push(totalAmount);
-                        });
-
-                        // Vẽ hoặc cập nhật biểu đồ
-                        const ctx = document.getElementById('transactionChart').getContext('2d');
-
-                        if (transactionChart) {
-                            // Cập nhật dữ liệu biểu đồ hiện tại
-                            transactionChart.data.labels = labels;
-                            transactionChart.data.datasets[0].data = amounts;
-                            transactionChart.update();
-                        } else {
-                            // Tạo biểu đồ mới
-                            transactionChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                        label: 'Tổng Số Tiền (VND)',
-                                        data: amounts,
-                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                        borderColor: 'rgba(75, 192, 192, 1)',
-                                        borderWidth: 1,
-                                        fill: true,
-                                        tension: 0.1
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            ticks: {
-                                                // Format số tiền theo VND
-                                                callback: function(value) {
-                                                    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-                                                }
-                                            }
-                                        }
-                                    },
-                                    plugins: {
-                                        legend: {
-                                            display: true,
-                                            position: 'top',
-                                        },
-                                        tooltip: {
-                                            callbacks: {
-                                                label: function(context) {
-                                                    let label = context.dataset.label || '';
-                                                    if (label) {
-                                                        label += ': ';
-                                                    }
-                                                    if (context.parsed.y !== null) {
-                                                        label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
-                                                    }
-                                                    return label;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        }
-
-                    } catch (error) {
-                        console.error('Lỗi khi lấy dữ liệu:', error);
-                        errorMessage.textContent = 'Đã xảy ra lỗi khi lấy dữ liệu. Vui lòng thử lại sau.';
-                    }
-                }
-
-                // Tự động tải dữ liệu khi trang được tải
-                window.onload = fetchTransactionSummary;
-            </script>
-
-            </body>
-            </html>
-
-        </section>
-    </div>
+<div class="sidebar">
+    <nav>
+        <ul>
+            <li><h2 style="text-align: center">ABCBank manage</h2></li>
+            <li><a href="/dashboard/loan-offers"><i class="fas fa-dollar-sign"></i> Quản lý khoản vay</a></li>
+            <li><a href="/dashboard/account-bank"><i class="fas fa-user"></i> Quản lý tài khoản</a></li>
+            <li><a href="/dashboard/transaction-details"><i class="fas fa-exchange-alt"></i> Chi tiết giao dịch</a></li>
+            <li><a href="/dashboard/transaction-details/monthly-summary"><i class="fas fa-calendar-alt"></i> Giao dịch theo tháng</a></li>
+        </ul>
+    </nav>
 </div>
 
-<script src="/js/app.js"></script>
+<main>
+    <section>
+        <h2>Danh sách người dùng</h2>
+        <table id="userTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Trạng thái</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div id="userPagination" class="pagination"></div>
+    </section>
+
+    <section>
+        <h2>Biểu đồ số lượng người dùng đăng ký</h2>
+        <form id="timeSelector">
+            <label for="yearSelect">Chọn năm:</label>
+            <select id="yearSelect"></select>
+
+            <label for="monthSelect">Chọn tháng:</label>
+            <select id="monthSelect">
+                <option value="1">Tháng 1</option>
+                <option value="2">Tháng 2</option>
+                <option value="3">Tháng 3</option>
+                <option value="4">Tháng 4</option>
+                <option value="5">Tháng 5</option>
+                <option value="6">Tháng 6</option>
+                <option value="7">Tháng 7</option>
+                <option value="8">Tháng 8</option>
+                <option value="9">Tháng 9</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
+            </select>
+
+            <button type="button" onclick="updateChart()">Xem biểu đồ</button>
+        </form>
+
+        <canvas id="userRegistrationChart" width="400" height="200"></canvas>
+    </section>
+</main>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+</div>
+
+<script>
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    if (!jwtToken) {
+        alert('Bạn cần đăng nhập để tiếp tục.');
+        window.location.href = '/login';
+    }
+
+    const checkTokenAndRedirect = () => {
+        if (jwtToken) {
+            const introspectRequest = { token: jwtToken };
+            fetch('/auth/introspect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(introspectRequest)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!(data.code === 200 && data.result && data.result.valid === true)) {
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi kiểm tra token:', error);
+                });
+        }
+    };
+    checkTokenAndRedirect();
+
+    let userRegistrationChart = null;  // Biến toàn cục lưu đối tượng biểu đồ
+
+    function showLoading() {
+        document.getElementById("loadingOverlay").classList.add("active");
+    }
+
+    function hideLoading() {
+        document.getElementById("loadingOverlay").classList.remove("active");
+    }
+
+    // Lấy dữ liệu người dùng từ localStorage nếu có
+    function loadUsersFromLocalStorage() {
+        const storedUsers = localStorage.getItem('userTableData');
+        if (storedUsers) {
+            renderUsers(JSON.parse(storedUsers));
+            const storedPage = localStorage.getItem('currentPage');
+            if (storedPage) {
+                const currentPage = parseInt(storedPage, 10);
+                renderPaginationFromLocalStorage(currentPage);
+            }
+        } else {
+            fetchUsers(0);  // Nếu không có dữ liệu bảng trong localStorage, fetch dữ liệu
+        }
+    }
+
+    // Fetch dữ liệu người dùng từ API
+    async function fetchUsers(page = 0) {
+        showLoading();
+        try {
+            const response = await fetch(`/api/users?page=${page}&size=5`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                }
+            });
+            const data = await response.json();
+            if (data.code === 200 && data.result) {
+                const users = data.result.data;
+                localStorage.setItem('userTableData', JSON.stringify(users));
+                localStorage.setItem('currentPage', page);
+                renderUsers(users);
+                renderPagination(page, data.result.totalPages);
+            } else {
+                console.error("Lỗi khi tải dữ liệu người dùng:", data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi khi kết nối API:", error);
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function renderUsers(users) {
+        const tbody = document.querySelector('#userTable tbody');
+        tbody.innerHTML = '';
+        users.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.fullName}</td>
+                <td>${user.email}</td>
+                <td>${user.phone}</td>
+                <td>${user.status}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderPagination(page, totalPages) {
+        const paginationContainer = document.getElementById('userPagination');
+        paginationContainer.innerHTML = '';
+
+        if (totalPages > 1) {
+            for (let i = 0; i < totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i + 1;
+                button.onclick = () => {
+                    localStorage.setItem('currentPage', i);
+                    fetchUsers(i);
+                };
+
+                if (i === page) {
+                    button.classList.add('active');
+                }
+
+                paginationContainer.appendChild(button);
+            }
+        }
+    }
+
+    function renderPaginationFromLocalStorage(currentPage) {
+        const paginationContainer = document.getElementById('userPagination');
+        const totalPages = localStorage.getItem('totalPages');
+        paginationContainer.innerHTML = '';
+
+        if (totalPages > 1) {
+            for (let i = 0; i < totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i + 1;
+                button.onclick = () => {
+                    localStorage.setItem('currentPage', i);
+                    fetchUsers(i);
+                };
+
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+
+                paginationContainer.appendChild(button);
+            }
+        }
+    }
+
+    // Event listener cho việc thay đổi năm/tháng và cập nhật biểu đồ
+    function updateChart() {
+        const year = document.getElementById('yearSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        showLoading();
+        fetch(`/api/registration-summary?year=${year}&month=${month}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200 && data.result) {
+                    const chartData = data.result;
+                    updateChartData(chartData);
+                } else {
+                    console.error('Không có dữ liệu');
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi tải biểu đồ:', error);
+            })
+            .finally(() => {
+                hideLoading();
+            });
+    }
+
+    function updateChartData(chartData) {
+        const labels = chartData.map(item => item.date);
+        const data = chartData.map(item => item.count);
+
+        if (userRegistrationChart) {
+            userRegistrationChart.destroy();
+        }
+
+        userRegistrationChart = new Chart(document.getElementById('userRegistrationChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng người dùng đăng ký',
+                    data: data,
+                    borderColor: '#007BFF',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    // Khởi tạo các tùy chọn năm cho biểu đồ
+    function initializeYearSelector() {
+        const currentYear = new Date().getFullYear();
+        const yearSelect = document.getElementById('yearSelect');
+        for (let i = 0; i < 5; i++) {
+            const option = document.createElement('option');
+            option.value = currentYear - i;
+            option.textContent = currentYear - i;
+            yearSelect.appendChild(option);
+        }
+    }
+
+    initializeYearSelector();
+    loadUsersFromLocalStorage();
+</script>
 </body>
 </html>

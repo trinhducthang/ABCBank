@@ -99,33 +99,83 @@
         #timeSelector label {
             font-weight: bold;
         }
+        .sidebar {
+            width: 250px;
+            background: #1e1e2f;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            margin: 0;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar nav ul li a:hover {
+            background: #4b577f;
+            border-left: 3px solid #007BFF;
+            padding-left: 17px;
+        }
+
+        .sidebar nav ul li a.active {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
+            font-weight: bold;
+        }
+
+        .sidebar nav ul li a i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        main {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding-left: 20px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
 </head>
 <body>
-<header>
-    <h1>Dashboard</h1>
-    <nav style="list-style: none;">
-        <li>
-            <a style="text-decoration: none; color: white" href="/dashboard/loan-offers">Quản lý khoản vay</a>
-        </li>
-        <li>
-            <a style="text-decoration: none; color: white" href="/dashboard/account-bank">Quản lý tài khoản</a>
-        </li>
-        <li>
-            <a style="text-decoration: none; color: white" href="/dashboard/transaction-details">Chi tiết giao dịch</a>
-        </li>
-        <li>
-            <a style="text-decoration: none; color: white" href="/dashboard/transaction-details/monthly-summary">Giao dịch theo tháng</a>
-        </li>
+<div class="sidebar">
+    <nav>
+        <ul>
+            <li><h2 style="text-align: center">ABCBank manage</h2></li>
+            <li><a href="/dashboard/loan-offers"><i class="fas fa-dollar-sign"></i> Quản lý khoản vay</a></li>
+            <li><a href="/dashboard/account-bank"><i class="fas fa-user"></i> Quản lý tài khoản</a></li>
+            <li><a href="/dashboard/transaction-details"><i class="fas fa-exchange-alt"></i> Chi tiết giao dịch</a></li>
+            <li><a href="/dashboard/transaction-details/monthly-summary"><i class="fas fa-calendar-alt"></i> Giao dịch theo tháng</a></li>
+        </ul>
     </nav>
-</header>
-
+</div>
 <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
 </div>
 
-<main>
+<main >
     <section>
         <h2>Danh sách người dùng</h2>
         <table id="userTable">

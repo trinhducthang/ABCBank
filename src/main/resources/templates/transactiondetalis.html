@@ -1,19 +1,263 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Transaction Details</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            padding: 20px;-->
+<!--            background-color: #f4f4f9;-->
+<!--        }-->
+<!--        h1 {-->
+<!--            text-align: center;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+<!--        table {-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--            margin: 20px 0;-->
+<!--            background-color: white;-->
+<!--            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+<!--        table, th, td {-->
+<!--            border: 1px solid #ddd;-->
+<!--        }-->
+<!--        th, td {-->
+<!--            padding: 12px;-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--        th {-->
+<!--            background-color: #4A90E2;-->
+<!--            color: white;-->
+<!--        }-->
+<!--        td {-->
+<!--            font-size: 14px;-->
+<!--        }-->
+<!--        .pagination {-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+<!--        .pagination button {-->
+<!--            padding: 10px 20px;-->
+<!--            margin: 0 10px;-->
+<!--            cursor: pointer;-->
+<!--            background-color: #4A90E2;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 5px;-->
+<!--        }-->
+<!--        .pagination button:disabled {-->
+<!--            background-color: #ddd;-->
+<!--            cursor: not-allowed;-->
+<!--        }-->
+<!--        .pagination button:hover {-->
+<!--            background-color:#4A90E2;-->
+<!--        }-->
+<!--        .back-btn {-->
+<!--            position: absolute;-->
+<!--            top: 20px;-->
+<!--            left: 20px;-->
+<!--            background-color: #007bff;-->
+<!--            color: white;-->
+<!--            padding: 10px 15px;-->
+<!--            font-size: 14px;-->
+<!--            border: none;-->
+<!--            border-radius: 5px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        .back-btn:hover {-->
+<!--            background-color: #0056b3;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<button class="back-btn" onclick="window.location.href = '/dashboard'">Quay lại trang chủ</button>-->
+
+<!--<h1>Transaction Details</h1>-->
+
+<!--&lt;!&ndash; Table to display the transactions &ndash;&gt;-->
+<!--<table>-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>ID</th>-->
+<!--        <th>Bank Number</th>-->
+<!--        <th>Amount</th>-->
+<!--        <th>Description</th>-->
+<!--        <th>Transaction Date</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody id="transactionTableBody">-->
+<!--    &lt;!&ndash; Rows will be inserted dynamically &ndash;&gt;-->
+<!--    </tbody>-->
+<!--</table>-->
+
+<!--&lt;!&ndash; Pagination controls &ndash;&gt;-->
+<!--<div class="pagination" id="paginationControls">-->
+<!--    <button id="prevBtn" disabled>Previous</button>-->
+<!--    <button id="nextBtn" disabled>Next</button>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    // Initialize pagination variables-->
+<!--    let currentPage = 0;-->
+<!--    let totalPages = 0;-->
+
+<!--    // Function to load transactions for the current page-->
+<!--    function loadTransactions(page = 0) {  // Đảm bảo mặc định trang là 0-->
+<!--        // Lấy JWT token từ localStorage (hoặc từ nơi bạn lưu)-->
+<!--        const jwtToken = localStorage.getItem('jwtToken'); // Điều chỉnh theo cách bạn lưu token-->
+
+<!--        // Kiểm tra nếu có JWT token-->
+<!--        if (!jwtToken) {-->
+<!--            alert("JWT token không có! Vui lòng đăng nhập lại.");-->
+<!--            return;-->
+<!--        }-->
+
+<!--        // Thực hiện yêu cầu API với JWT token trong header Authorization-->
+<!--        fetch(`/transactions?page=${page}&size=10`, {-->
+<!--            method: 'GET',-->
+<!--            headers: {-->
+<!--                'Authorization': `Bearer ${jwtToken}`,  // Thêm JWT token vào header-->
+<!--                'Content-Type': 'application/json'-->
+<!--            }-->
+<!--        })-->
+<!--            .then(response => {-->
+<!--                if (!response.ok) {-->
+<!--                    throw new Error("Lỗi khi tải dữ liệu giao dịch.");-->
+<!--                }-->
+<!--                return response.json();-->
+<!--            })-->
+<!--            .then(data => {-->
+<!--                // Update the table with transaction data-->
+<!--                const tableBody = document.getElementById('transactionTableBody');-->
+<!--                tableBody.innerHTML = ''; // Clear existing rows-->
+
+<!--                data.content.forEach(transaction => {-->
+<!--                    const row = document.createElement('tr');-->
+<!--                    row.innerHTML = `-->
+<!--            <td>${transaction.id}</td>-->
+<!--            <td>${transaction.bankNumber}</td>-->
+<!--            <td>${transaction.amount}</td>-->
+<!--            <td>${transaction.description}</td>-->
+<!--            <td>${transaction.transactionDate}</td>-->
+<!--        `;-->
+<!--                    tableBody.appendChild(row);-->
+<!--                });-->
+
+<!--                // Update pagination information-->
+<!--                totalPages = data.totalPages;-->
+<!--                currentPage = data.number;-->
+
+<!--                // Enable or disable pagination buttons-->
+<!--                document.getElementById('prevBtn').disabled = currentPage === 0;-->
+<!--                document.getElementById('nextBtn').disabled = currentPage === totalPages - 1;-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error fetching transaction data:', error);-->
+<!--            });-->
+<!--    }-->
+
+<!--    // Load initial data-->
+<!--    loadTransactions();-->
+
+<!--    // Add event listeners for pagination buttons-->
+<!--    document.getElementById('prevBtn').addEventListener('click', () => {-->
+<!--        if (currentPage > 0) {-->
+<!--            loadTransactions(currentPage - 1);-->
+<!--        }-->
+<!--    });-->
+
+<!--    document.getElementById('nextBtn').addEventListener('click', () => {-->
+<!--        if (currentPage < totalPages - 1) {-->
+<!--            loadTransactions(currentPage + 1);-->
+<!--        }-->
+<!--    });-->
+
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction Details</title>
+    <title>Transaction Details with Sidebar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Sidebar styling */
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #1e1e2f;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            margin: 0;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar nav ul li a:hover {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
+            padding-left: 17px;
+        }
+
+        .sidebar nav ul li a.active {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
+        }
+
+        .content {
+            margin-left: 250px;
             padding: 20px;
+            flex: 1;
             background-color: #f4f4f9;
         }
+
         h1 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -21,25 +265,31 @@
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
+
         th, td {
             padding: 12px;
             text-align: center;
         }
+
         th {
             background-color: #4A90E2;
             color: white;
         }
+
         td {
             font-size: 14px;
         }
+
         .pagination {
             display: flex;
             justify-content: center;
             margin-top: 20px;
         }
+
         .pagination button {
             padding: 10px 20px;
             margin: 0 10px;
@@ -49,56 +299,56 @@
             border: none;
             border-radius: 5px;
         }
+
         .pagination button:disabled {
             background-color: #ddd;
             cursor: not-allowed;
         }
-        .pagination button:hover {
-            background-color:#4A90E2;
-        }
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            font-size: 14px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
 
-        .back-btn:hover {
+        .pagination button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-<button class="back-btn" onclick="window.location.href = '/dashboard'">Quay lại trang chủ</button>
+<!-- Sidebar -->
+<div class="sidebar">
+    <nav>
+        <ul>
+            <li><h2 style="text-align: center" onclick="window.location.href='/dashboard'">ABCBank manage</h2></li>
+            <li><a href="/dashboard/loan-offers"><i class="fas fa-dollar-sign"></i> Quản lý khoản vay</a></li>
+            <li><a href="/dashboard/account-bank"><i class="fas fa-user"></i> Quản lý tài khoản</a></li>
+            <li><a href="/dashboard/transaction-details" class="active"><i class="fas fa-exchange-alt"></i> Chi tiết giao dịch</a></li>
+            <li><a href="/dashboard/transaction-details/monthly-summary"><i class="fas fa-calendar-alt"></i> Giao dịch theo tháng</a></li>
+        </ul>
+    </nav>
+</div>
 
-<h1>Transaction Details</h1>
+<!-- Main Content -->
+<div class="content">
+    <h1>Transaction Details</h1>
 
-<!-- Table to display the transactions -->
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Bank Number</th>
-        <th>Amount</th>
-        <th>Description</th>
-        <th>Transaction Date</th>
-    </tr>
-    </thead>
-    <tbody id="transactionTableBody">
-    <!-- Rows will be inserted dynamically -->
-    </tbody>
-</table>
+    <!-- Table to display the transactions -->
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Bank Number</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Transaction Date</th>
+        </tr>
+        </thead>
+        <tbody id="transactionTableBody">
+        <!-- Rows will be inserted dynamically -->
+        </tbody>
+    </table>
 
-<!-- Pagination controls -->
-<div class="pagination" id="paginationControls">
-    <button id="prevBtn" disabled>Previous</button>
-    <button id="nextBtn" disabled>Next</button>
+    <!-- Pagination controls -->
+    <div class="pagination" id="paginationControls">
+        <button id="prevBtn" disabled>Previous</button>
+        <button id="nextBtn" disabled>Next</button>
+    </div>
 </div>
 
 <script>
@@ -107,21 +357,18 @@
     let totalPages = 0;
 
     // Function to load transactions for the current page
-    function loadTransactions(page = 0) {  // Đảm bảo mặc định trang là 0
-        // Lấy JWT token từ localStorage (hoặc từ nơi bạn lưu)
-        const jwtToken = localStorage.getItem('jwtToken'); // Điều chỉnh theo cách bạn lưu token
+    function loadTransactions(page = 0) {
+        const jwtToken = localStorage.getItem('jwtToken');
 
-        // Kiểm tra nếu có JWT token
         if (!jwtToken) {
             alert("JWT token không có! Vui lòng đăng nhập lại.");
             return;
         }
 
-        // Thực hiện yêu cầu API với JWT token trong header Authorization
         fetch(`/transactions?page=${page}&size=10`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${jwtToken}`,  // Thêm JWT token vào header
+                'Authorization': `Bearer ${jwtToken}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -132,27 +379,24 @@
                 return response.json();
             })
             .then(data => {
-                // Update the table with transaction data
                 const tableBody = document.getElementById('transactionTableBody');
-                tableBody.innerHTML = ''; // Clear existing rows
+                tableBody.innerHTML = '';
 
                 data.content.forEach(transaction => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-            <td>${transaction.id}</td>
-            <td>${transaction.bankNumber}</td>
-            <td>${transaction.amount}</td>
-            <td>${transaction.description}</td>
-            <td>${transaction.transactionDate}</td>
-        `;
+                            <td>${transaction.id}</td>
+                            <td>${transaction.bankNumber}</td>
+                            <td>${transaction.amount}</td>
+                            <td>${transaction.description}</td>
+                            <td>${transaction.transactionDate}</td>
+                        `;
                     tableBody.appendChild(row);
                 });
 
-                // Update pagination information
                 totalPages = data.totalPages;
                 currentPage = data.number;
 
-                // Enable or disable pagination buttons
                 document.getElementById('prevBtn').disabled = currentPage === 0;
                 document.getElementById('nextBtn').disabled = currentPage === totalPages - 1;
             })
@@ -164,7 +408,6 @@
     // Load initial data
     loadTransactions();
 
-    // Add event listeners for pagination buttons
     document.getElementById('prevBtn').addEventListener('click', () => {
         if (currentPage > 0) {
             loadTransactions(currentPage - 1);
@@ -176,8 +419,7 @@
             loadTransactions(currentPage + 1);
         }
     });
-
 </script>
-
 </body>
 </html>
+

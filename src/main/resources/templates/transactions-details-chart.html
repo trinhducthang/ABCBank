@@ -1,19 +1,360 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="vi">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Tổng Số Tiền Giao Dịch Hàng Ngày Trong Tháng</title>-->
+<!--    &lt;!&ndash; Thêm CSS cho trang &ndash;&gt;-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            margin: 20px;-->
+<!--            background-color: #e0e7ff;  /* Màu nền trang sáng, giống như trong ví dụ trước */-->
+<!--        }-->
+
+<!--        h1 {-->
+<!--            text-align: center;-->
+<!--            color: #3b5998;  /* Màu tiêu đề đậm hơn, giống như màu xanh đậm */-->
+<!--        }-->
+
+<!--        .input-section {-->
+<!--            margin-bottom: 20px;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        .input-section label {-->
+<!--            margin: 0 10px;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .input-section input {-->
+<!--            padding: 5px;-->
+<!--            margin-right: 20px;-->
+<!--            width: 100px;-->
+<!--        }-->
+
+<!--        .input-section button {-->
+<!--            padding: 5px 10px;-->
+<!--            font-size: 16px;-->
+<!--            background-color: #007bff;  /* Màu nền nút xanh lam */-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 5px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        .input-section button:hover {-->
+<!--            background-color: #0056b3;  /* Màu khi hover vào nút */-->
+<!--        }-->
+
+<!--        .chart-container {-->
+<!--            width: 100%;-->
+<!--            max-width: 800px;-->
+<!--            margin: 0 auto 40px;-->
+<!--        }-->
+
+<!--        table {-->
+<!--            width: 100%;-->
+<!--            max-width: 800px;-->
+<!--            margin: 0 auto;-->
+<!--            border-collapse: collapse;-->
+<!--            background-color: #fff;-->
+<!--        }-->
+
+<!--        table th, table td {-->
+<!--            padding: 12px;-->
+<!--            border: 1px solid #ddd;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        table th {-->
+<!--            background-color: #007bff;  /* Màu nền tiêu đề bảng */-->
+<!--            color: white;-->
+<!--        }-->
+
+<!--        table td {-->
+<!--            font-size: 14px;-->
+<!--        }-->
+
+<!--        .error {-->
+<!--            color: red;-->
+<!--            text-align: center;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+
+<!--        /* Màn hình nhỏ */-->
+<!--        @media (max-width: 600px) {-->
+<!--            .input-section input {-->
+<!--                width: 80px;-->
+<!--            }-->
+<!--            .input-section button {-->
+<!--                width: 100%;-->
+<!--                margin-top: 10px;-->
+<!--            }-->
+<!--            table th, table td {-->
+<!--                padding: 8px;-->
+<!--            }-->
+<!--        }-->
+<!--        .back-btn {-->
+<!--            position: absolute;-->
+<!--            top: 20px;-->
+<!--            left: 20px;-->
+<!--            background-color: #007bff;-->
+<!--            color: white;-->
+<!--            padding: 10px 15px;-->
+<!--            font-size: 14px;-->
+<!--            border: none;-->
+<!--            border-radius: 5px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        .back-btn:hover {-->
+<!--            background-color: #0056b3;-->
+<!--        }-->
+<!--    </style>-->
+<!--    &lt;!&ndash; Thêm Chart.js từ CDN &ndash;&gt;-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+<!--    &lt;!&ndash; Thêm Axios từ CDN &ndash;&gt;-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Tổng Số Tiền Giao Dịch Hàng Ngày Trong Tháng</h1>-->
+
+<!--<div class="input-section">-->
+<!--    <label for="year">Năm:</label>-->
+<!--    <input type="number" id="year" value="2024" min="2000" max="2100">-->
+
+<!--    <label for="month">Tháng:</label>-->
+<!--    <input type="number" id="month" value="12" min="1" max="12">-->
+
+<!--    <button onclick="fetchTransactionSummary()">Lấy Dữ Liệu</button>-->
+<!--</div>-->
+
+<!--<div class="chart-container">-->
+<!--    <canvas id="transactionChart"></canvas>-->
+<!--</div>-->
+
+<!--<table id="transactionTable">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>Ngày</th>-->
+<!--        <th>Tổng Số Tiền (VND)</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    &lt;!&ndash; Dữ liệu sẽ được thêm vào đây &ndash;&gt;-->
+<!--    </tbody>-->
+<!--</table>-->
+
+<!--<div class="error" id="errorMessage"></div>-->
+
+<!--&lt;!&ndash; JavaScript để xử lý dữ liệu và vẽ biểu đồ &ndash;&gt;-->
+<!--<script>-->
+<!--    let transactionChart = null;-->
+
+<!--    // Hàm để lấy dữ liệu từ API-->
+<!--    async function fetchTransactionSummary() {-->
+<!--        const year = document.getElementById('year').value;-->
+<!--        const month = document.getElementById('month').value;-->
+<!--        const errorMessage = document.getElementById('errorMessage');-->
+<!--        errorMessage.textContent = ''; // Xóa thông báo lỗi trước đó-->
+
+<!--        // Kiểm tra đầu vào-->
+<!--        if (year < 2000 || year > 2100) {-->
+<!--            errorMessage.textContent = 'Vui lòng nhập năm hợp lệ (2000 - 2100).';-->
+<!--            return;-->
+<!--        }-->
+<!--        if (month < 1 || month > 12) {-->
+<!--            errorMessage.textContent = 'Vui lòng nhập tháng hợp lệ (1 - 12).';-->
+<!--            return;-->
+<!--        }-->
+
+<!--        try {-->
+<!--            // Thực hiện yêu cầu GET đến API-->
+<!--            const response = await axios.get('/monthly-summary', {-->
+<!--                params: { year: year, month: month }-->
+<!--            });-->
+
+<!--            const data = response.data;-->
+
+<!--            // Kiểm tra dữ liệu trả về-->
+<!--            if (!Array.isArray(data)) {-->
+<!--                throw new Error('Dữ liệu không hợp lệ.');-->
+<!--            }-->
+
+<!--            // Xóa dữ liệu bảng cũ-->
+<!--            const tableBody = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];-->
+<!--            tableBody.innerHTML = '';-->
+
+<!--            // Chuẩn bị dữ liệu cho biểu đồ-->
+<!--            const labels = [];-->
+<!--            const amounts = [];-->
+
+<!--            // Thêm dữ liệu vào bảng và mảng cho biểu đồ-->
+<!--            data.forEach(item => {-->
+<!--                const date = new Date(item[0]); // Giả sử item[0] là ngày dưới dạng ISO string-->
+<!--                const totalAmount = item[1];-->
+
+<!--                // Thêm hàng vào bảng-->
+<!--                const row = tableBody.insertRow();-->
+<!--                const cellDate = row.insertCell(0);-->
+<!--                const cellAmount = row.insertCell(1);-->
+<!--                cellDate.textContent = date.toLocaleDateString('vi-VN');-->
+<!--                cellAmount.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalAmount);-->
+
+<!--                // Thêm dữ liệu cho biểu đồ-->
+<!--                labels.push(date.toLocaleDateString('vi-VN'));-->
+<!--                amounts.push(totalAmount);-->
+<!--            });-->
+
+<!--            // Vẽ hoặc cập nhật biểu đồ-->
+<!--            const ctx = document.getElementById('transactionChart').getContext('2d');-->
+
+<!--            if (transactionChart) {-->
+<!--                // Cập nhật dữ liệu biểu đồ hiện tại-->
+<!--                transactionChart.data.labels = labels;-->
+<!--                transactionChart.data.datasets[0].data = amounts;-->
+<!--                transactionChart.update();-->
+<!--            } else {-->
+<!--                // Tạo biểu đồ mới-->
+<!--                transactionChart = new Chart(ctx, {-->
+<!--                    type: 'line',-->
+<!--                    data: {-->
+<!--                        labels: labels,-->
+<!--                        datasets: [{-->
+<!--                            label: 'Tổng Số Tiền (VND)',-->
+<!--                            data: amounts,-->
+<!--                            backgroundColor: 'rgba(75, 192, 192, 0.2)',-->
+<!--                            borderColor: 'rgba(75, 192, 192, 1)',-->
+<!--                            borderWidth: 1,-->
+<!--                            fill: true,-->
+<!--                            tension: 0.1-->
+<!--                        }]-->
+<!--                    },-->
+<!--                    options: {-->
+<!--                        responsive: true,-->
+<!--                        scales: {-->
+<!--                            y: {-->
+<!--                                beginAtZero: true,-->
+<!--                                ticks: {-->
+<!--                                    // Format số tiền theo VND-->
+<!--                                    callback: function(value) {-->
+<!--                                        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);-->
+<!--                                    }-->
+<!--                                }-->
+<!--                            }-->
+<!--                        },-->
+<!--                        plugins: {-->
+<!--                            legend: {-->
+<!--                                display: true,-->
+<!--                                position: 'top',-->
+<!--                            },-->
+<!--                            tooltip: {-->
+<!--                                callbacks: {-->
+<!--                                    label: function(context) {-->
+<!--                                        let label = context.dataset.label || '';-->
+<!--                                        if (label) {-->
+<!--                                            label += ': ';-->
+<!--                                        }-->
+<!--                                        if (context.parsed.y !== null) {-->
+<!--                                            label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);-->
+<!--                                        }-->
+<!--                                        return label;-->
+<!--                                    }-->
+<!--                                }-->
+<!--                            }-->
+<!--                        }-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+
+<!--        } catch (error) {-->
+<!--            console.error('Lỗi khi lấy dữ liệu:', error);-->
+<!--            errorMessage.textContent = 'Đã xảy ra lỗi khi lấy dữ liệu. Vui lòng thử lại sau.';-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Tự động tải dữ liệu khi trang được tải-->
+<!--    window.onload = fetchTransactionSummary;-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tổng Số Tiền Giao Dịch Hàng Ngày Trong Tháng</title>
-    <!-- Thêm CSS cho trang -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
+        /* CSS cho toàn bộ trang */
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #e0e7ff;  /* Màu nền trang sáng, giống như trong ví dụ trước */
+            display: flex;
+            background-color: #e0e7ff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #1e1e2f;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            margin: 0;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar nav ul li a:hover {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
+            padding-left: 17px;
+        }
+
+        .sidebar nav ul li a.active {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
+        }
+
+        /* Nội dung */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            flex: 1;
         }
 
         h1 {
             text-align: center;
-            color: #3b5998;  /* Màu tiêu đề đậm hơn, giống như màu xanh đậm */
+            color: #3b5998;
         }
 
         .input-section {
@@ -35,7 +376,7 @@
         .input-section button {
             padding: 5px 10px;
             font-size: 16px;
-            background-color: #007bff;  /* Màu nền nút xanh lam */
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
@@ -43,7 +384,7 @@
         }
 
         .input-section button:hover {
-            background-color: #0056b3;  /* Màu khi hover vào nút */
+            background-color: #0056b3;
         }
 
         .chart-container {
@@ -67,7 +408,7 @@
         }
 
         table th {
-            background-color: #007bff;  /* Màu nền tiêu đề bảng */
+            background-color: #007bff;
             color: white;
         }
 
@@ -86,69 +427,64 @@
             .input-section input {
                 width: 80px;
             }
+
             .input-section button {
                 width: 100%;
                 margin-top: 10px;
             }
+
             table th, table td {
                 padding: 8px;
             }
         }
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            font-size: 14px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .back-btn:hover {
-            background-color: #0056b3;
-        }
     </style>
-    <!-- Thêm Chart.js từ CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Thêm Axios từ CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-<button class="back-btn" onclick="window.location.href='/dashboard'" >Quay lại trang chủ</button>
-<h1>Tổng Số Tiền Giao Dịch Hàng Ngày Trong Tháng</h1>
-
-<div class="input-section">
-    <label for="year">Năm:</label>
-    <input type="number" id="year" value="2024" min="2000" max="2100">
-
-    <label for="month">Tháng:</label>
-    <input type="number" id="month" value="12" min="1" max="12">
-
-    <button onclick="fetchTransactionSummary()">Lấy Dữ Liệu</button>
+<div class="sidebar">
+    <nav>
+        <ul>
+            <li><h2 style="text-align: center" onclick="window.location.href='/dashboard'">ABCBank manage</h2></li>
+            <li><a href="/dashboard/loan-offers"><i class="fas fa-dollar-sign"></i> Quản lý khoản vay</a></li>
+            <li><a href="/dashboard/account-bank"><i class="fas fa-user"></i> Quản lý tài khoản</a></li>
+            <li><a href="/dashboard/transaction-details" class="active"><i class="fas fa-exchange-alt"></i> Chi tiết giao dịch</a></li>
+            <li><a href="/dashboard/transaction-details/monthly-summary"><i class="fas fa-calendar-alt"></i> Giao dịch theo tháng</a></li>
+        </ul>
+    </nav>
 </div>
 
-<div class="chart-container">
-    <canvas id="transactionChart"></canvas>
+<div class="content">
+    <h1>Tổng Số Tiền Giao Dịch Hàng Ngày Trong Tháng</h1>
+
+    <div class="input-section">
+        <label for="year">Năm:</label>
+        <input type="number" id="year" value="2024" min="2000" max="2100">
+
+        <label for="month">Tháng:</label>
+        <input type="number" id="month" value="12" min="1" max="12">
+
+        <button onclick="fetchTransactionSummary()">Lấy Dữ Liệu</button>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="transactionChart"></canvas>
+    </div>
+
+    <table id="transactionTable">
+        <thead>
+        <tr>
+            <th>Ngày</th>
+            <th>Tổng Số Tiền (VND)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Dữ liệu sẽ được thêm vào đây -->
+        </tbody>
+    </table>
+
+    <div class="error" id="errorMessage"></div>
 </div>
 
-<table id="transactionTable">
-    <thead>
-    <tr>
-        <th>Ngày</th>
-        <th>Tổng Số Tiền (VND)</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- Dữ liệu sẽ được thêm vào đây -->
-    </tbody>
-</table>
-
-<div class="error" id="errorMessage"></div>
-
-<!-- JavaScript để xử lý dữ liệu và vẽ biểu đồ -->
 <script>
     let transactionChart = null;
 
@@ -277,6 +613,5 @@
     // Tự động tải dữ liệu khi trang được tải
     window.onload = fetchTransactionSummary;
 </script>
-
 </body>
 </html>

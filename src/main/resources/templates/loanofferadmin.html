@@ -1,9 +1,261 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Loan Offer Management</title>-->
+<!--    <style>-->
+<!--        /* styles.css */-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            background-color: #f4f4f4;-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--        }-->
+
+<!--        .container {-->
+<!--            width: 80%;-->
+<!--            margin: 0 auto;-->
+<!--            padding: 20px;-->
+<!--            background-color: white;-->
+<!--            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+
+<!--        h1 {-->
+<!--            text-align: center;-->
+<!--            color: #333;-->
+<!--        }-->
+
+<!--        h2 {-->
+<!--            color: #333;-->
+<!--            font-size: 20px;-->
+<!--        }-->
+
+<!--        .form-container {-->
+<!--            background-color: #f9f9f9;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 5px;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        form {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--        }-->
+
+<!--        form label {-->
+<!--            margin: 5px 0;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        form input {-->
+<!--            padding: 10px;-->
+<!--            margin: 10px 0;-->
+<!--            border: 1px solid #ddd;-->
+<!--            border-radius: 5px;-->
+<!--        }-->
+
+<!--        form button {-->
+<!--            padding: 10px;-->
+<!--            background-color: #4A90E2;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 5px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        form button:hover {-->
+<!--            background-color: #4A90E2;-->
+<!--        }-->
+
+<!--        table {-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--        }-->
+
+<!--        table th, table td {-->
+<!--            padding: 12px;-->
+<!--            text-align: left;-->
+<!--            border-bottom: 1px solid #ddd;-->
+<!--        }-->
+
+<!--        button {-->
+<!--            padding: 5px 10px;-->
+<!--            background-color: #4A90E2;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 3px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        button:hover {-->
+<!--            background-color: #4A90E2;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <h1>Quản lý khoản vay</h1>-->
+
+<!--    &lt;!&ndash; Form to create or update a loan offer &ndash;&gt;-->
+<!--    <div id="loanForm" class="form-container">-->
+<!--        <h2>Tạo / Cập nhật khoản vay</h2>-->
+<!--        <form id="loanOfferForm">-->
+<!--            <label for="loanAmount">Số tiền vay :</label>-->
+<!--            <input type="number" id="loanAmount" name="loanAmount" required>-->
+
+<!--            <label for="interestRate">Lãi suất (%):</label>-->
+<!--            <input type="number" id="interestRate" name="interestRate" required>-->
+
+<!--            <label for="duration">Kì hạn(Tháng):</label>-->
+<!--            <input type="text" id="duration" name="duration" required>-->
+
+<!--            <button type="submit">Lưu Khoản Vay</button>-->
+<!--        </form>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Loan Offers Table &ndash;&gt;-->
+<!--    <h2>Danh sách khoản vay</h2>-->
+<!--    <table id="loanOffersTable">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Số tiền vay</th>-->
+<!--            <th>Lãi suất</th>-->
+<!--            <th>Kì hạn(Tháng)</th>-->
+<!--            <th>Sửa/Xóa</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody></tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    // app.js (Inline script)-->
+
+<!--    const apiUrl = 'http://localhost:8888/loanOffer'; // API URL-->
+
+<!--    // DOM Elements-->
+<!--    const loanOfferForm = document.getElementById('loanOfferForm');-->
+<!--    const loanOffersTable = document.getElementById('loanOffersTable').getElementsByTagName('tbody')[0];-->
+
+<!--    let currentLoanOfferId = null; // To store current loan offer ID for update-->
+
+<!--    // Load all loan offers when the page loads-->
+<!--    window.onload = function() {-->
+<!--        fetchLoanOffers();-->
+<!--    };-->
+
+<!--    // Fetch all loan offers and display them in the table-->
+<!--    function fetchLoanOffers() {-->
+<!--        fetch(apiUrl)-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                displayLoanOffers(data.result);-->
+<!--            })-->
+<!--            .catch(error => console.error('Error fetching loan offers:', error));-->
+<!--    }-->
+
+<!--    // Display loan offers in the table-->
+<!--    function displayLoanOffers(loanOffers) {-->
+<!--        loanOffersTable.innerHTML = ''; // Clear the table before rendering-->
+<!--        loanOffers.forEach(loanOffer => {-->
+<!--            const row = loanOffersTable.insertRow();-->
+<!--            row.innerHTML = `-->
+<!--                    <td>${loanOffer.loanAmount}</td>-->
+<!--                    <td>${loanOffer.interestRate}</td>-->
+<!--                    <td>${loanOffer.duration}</td>-->
+<!--                    <td>-->
+<!--                        <button onclick="editLoanOffer(${loanOffer.offerId})">Sửa</button>-->
+<!--                        <button onclick="deleteLoanOffer(${loanOffer.offerId})">Xóa</button>-->
+<!--                    </td>-->
+<!--                `;-->
+<!--        });-->
+<!--    }-->
+
+<!--    // Add or update loan offer-->
+<!--    loanOfferForm.addEventListener('submit', function(event) {-->
+<!--        event.preventDefault();-->
+
+<!--        const loanAmount = document.getElementById('loanAmount').value;-->
+<!--        const interestRate = document.getElementById('interestRate').value;-->
+<!--        const duration = document.getElementById('duration').value;-->
+
+<!--        const loanOffer = {-->
+<!--            loanAmount: loanAmount,-->
+<!--            interestRate: interestRate,-->
+<!--            duration: duration-->
+<!--        };-->
+
+<!--        let url = apiUrl;-->
+<!--        let method = 'POST'; // Default is POST (Create)-->
+
+<!--        // If we're editing an existing loan offer, update with PUT method-->
+<!--        if (currentLoanOfferId) {-->
+<!--            url = `${apiUrl}/${currentLoanOfferId}`;-->
+<!--            method = 'PUT'; // Update-->
+<!--        }-->
+
+<!--        // Send request (POST for create, PUT for update)-->
+<!--        fetch(url, {-->
+<!--            method: method,-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify(loanOffer)-->
+<!--        })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                fetchLoanOffers(); // Refresh the list-->
+<!--                resetForm(); // Reset the form-->
+<!--            })-->
+<!--            .catch(error => console.error('Error saving loan offer:', error));-->
+<!--    });-->
+
+<!--    // Edit loan offer-->
+<!--    function editLoanOffer(offerId) {-->
+<!--        fetch(`${apiUrl}/${offerId}`)-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                const loanOffer = data.result;-->
+<!--                document.getElementById('loanAmount').value = loanOffer.loanAmount;-->
+<!--                document.getElementById('interestRate').value = loanOffer.interestRate;-->
+<!--                document.getElementById('duration').value = loanOffer.duration;-->
+<!--                currentLoanOfferId = offerId; // Store offerId for future updates-->
+<!--            })-->
+<!--            .catch(error => console.error('Error fetching loan offer:', error));-->
+<!--    }-->
+
+<!--    // Delete loan offer-->
+<!--    function deleteLoanOffer(offerId) {-->
+<!--        if (confirm('Are you sure you want to delete this loan offer?')) {-->
+<!--            fetch(`${apiUrl}/${offerId}`, {-->
+<!--                method: 'DELETE'-->
+<!--            })-->
+<!--                .then(response => response.json())-->
+<!--                .then(data => {-->
+<!--                    fetchLoanOffers(); // Refresh the list-->
+<!--                })-->
+<!--                .catch(error => console.error('Error deleting loan offer:', error));-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Reset form-->
+<!--    function resetForm() {-->
+<!--        loanOfferForm.reset();-->
+<!--        currentLoanOfferId = null; // Clear the offerId after resetting the form-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loan Offer Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     <style>
         /* styles.css */
         body {
@@ -11,11 +263,59 @@
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #1e1e2f;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            margin: 0;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar nav ul li a:hover {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
+            padding-left: 17px;
+        }
+
+        .sidebar nav ul li a.active {
+            background: #343a50;
+            border-left: 3px solid #007BFF;
         }
 
         .container {
-            width: 80%;
-            margin: 0 auto;
+            margin-left: 250px;
+            width: calc(100% - 250px);
             padding: 20px;
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -94,6 +394,20 @@
     </style>
 </head>
 <body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <nav>
+        <ul>
+            <li><h2 style="text-align: center" onclick="window.location.href='/dashboard'">ABCBank manage</h2></li>
+            <li><a href="/dashboard/loan-offers"><i class="fas fa-dollar-sign"></i> Quản lý khoản vay</a></li>
+            <li><a href="/dashboard/account-bank"><i class="fas fa-user"></i> Quản lý tài khoản</a></li>
+            <li><a href="/dashboard/transaction-details" class="active"><i class="fas fa-exchange-alt"></i> Chi tiết giao dịch</a></li>
+            <li><a href="/dashboard/transaction-details/monthly-summary"><i class="fas fa-calendar-alt"></i> Giao dịch theo tháng</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Main content -->
 <div class="container">
     <h1>Quản lý khoản vay</h1>
 
@@ -161,14 +475,14 @@
         loanOffers.forEach(loanOffer => {
             const row = loanOffersTable.insertRow();
             row.innerHTML = `
-                    <td>${loanOffer.loanAmount}</td>
-                    <td>${loanOffer.interestRate}</td>
-                    <td>${loanOffer.duration}</td>
-                    <td>
-                        <button onclick="editLoanOffer(${loanOffer.offerId})">Sửa</button>
-                        <button onclick="deleteLoanOffer(${loanOffer.offerId})">Xóa</button>
-                    </td>
-                `;
+                        <td>${loanOffer.loanAmount}</td>
+                        <td>${loanOffer.interestRate}</td>
+                        <td>${loanOffer.duration}</td>
+                        <td>
+                            <button onclick="editLoanOffer(${loanOffer.offerId})">Sửa</button>
+                            <button onclick="deleteLoanOffer(${loanOffer.offerId})">Xóa</button>
+                        </td>
+                    `;
         });
     }
 
