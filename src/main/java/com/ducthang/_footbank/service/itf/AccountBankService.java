@@ -24,8 +24,9 @@ public interface AccountBankService {
     //authorize in business
     public AccountBankDTO transferMoney(String from, String to, String description, BigDecimal amount);
 
-    @PostAuthorize("returnObject[0].user.username == authentication.name")
+
     public Set<AccountBank> findAccountBank(Long userId);
 
     public String getNameUser(String accountNumber);
+
 }

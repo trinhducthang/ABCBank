@@ -178,4 +178,16 @@ public class UserServiceImpl implements UserService {
         return userObj.getEmail();
     }
 
+    @Override
+    public boolean disableUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not exits"));
+        String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = user.getUsername();
+        if(!authenticationName.equals(username) || (!authenticationName.equals("admin"))) throw new RuntimeException("Invalid authentication");
+        user.setDisabled(true);
+        return true;
+    }
+
+
+
 }

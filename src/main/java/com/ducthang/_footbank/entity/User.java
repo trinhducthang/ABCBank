@@ -38,6 +38,10 @@ public class User {
     private String phone;
     private Date dob;
     private Role role;
+    private boolean isDisabled;
+
+
+    
 
     @Enumerated(EnumType.STRING)
     private Gender gender;

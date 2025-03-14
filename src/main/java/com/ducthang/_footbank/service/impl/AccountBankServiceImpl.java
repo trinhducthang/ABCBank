@@ -108,6 +108,13 @@ public class AccountBankServiceImpl implements AccountBankService {
 
     @Override
     public Set<AccountBank> findAccountBank(Long userId){
+        Set<AccountBank> accountBank = accountRepository.findByUserId(userId);
+        if(accountBank.isEmpty()) return null;
+        String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
+        for(AccountBank accountBankEntity : accountBank){
+            String username = accountBankEntity.getUser().getUsername();
+            if(!authenticationName.equals(username)) throw new RuntimeException("Invalid authentication");
+        }
         return accountRepository.findByUserId(userId);
     }
 
@@ -118,5 +125,7 @@ public class AccountBankServiceImpl implements AccountBankService {
         User user = accountBank.getUser();
         return user.getLastName() + " " + user.getFirstName() ;
     }
+
+
 
 }

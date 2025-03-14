@@ -155,4 +155,22 @@ public class UserController {
             return e.getMessage();
         }
     }
+
+    @PostMapping("/disable/{id}")
+    public ApiResponse<?> disableUser(@PathVariable long id) {
+        try {
+            return ApiResponse.builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Disable user success!")
+                    .result(userService.disableUser(id))
+                    .build();
+        }
+        catch (Exception e) {
+            return ApiResponse.builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message(e.getMessage())
+
+                    .build();
+        }
+    }
 }

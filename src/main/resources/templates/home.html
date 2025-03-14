@@ -436,7 +436,17 @@
                             sourceSelect.appendChild(option);
                         });
                     } else {
-                        alert(`Lỗi: ${responseData.message}`);
+                        if(responseData.status === 200 && responseData.message === "get success") {
+
+                            const sourceSelect = document.getElementById('bankNumber');
+                            const option = document.createElement('option');
+                            option.value = null;
+                            option.textContent = `Bạn chưa có tài khoản, vui lòng đăng ký!`;
+                            sourceSelect.appendChild(option);
+                        }
+                        else {
+                            alert(`Lỗi: ${responseData.message}`);
+                        }
                     }
                 } else {
                     alert('Lỗi: Không thể tải thông tin tài khoản.');

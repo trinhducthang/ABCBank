@@ -37,4 +37,6 @@ public interface UserService {
     public User updatePassword(String username, String password);
 
     public String getEmailByUsername(String username);
+
+    public boolean disableUser(Long id);
 }
